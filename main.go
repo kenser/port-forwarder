@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/cloverzrg/go-portforward/config"
+	"github.com/cloverzrg/go-portforward/forwarding"
 	"github.com/cloverzrg/go-portforward/logger"
 	"github.com/cloverzrg/go-portforward/web"
 )
@@ -24,8 +25,8 @@ var (
 
 func main() {
 	var err error
-	//a := forwarding.New()
-	//a.ForwardPorts()
+	a := forwarding.New2()
+	//a.Close()
 	if err != nil {
 		logger.Panic(err)
 	}
