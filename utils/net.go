@@ -1,6 +1,8 @@
 package utils
 
-import "net"
+import (
+	"net"
+)
 
 func GetLocalHostAddress() (ip string) {
 	conn, err := net.Dial("udp", "8.8.8.8:80")
