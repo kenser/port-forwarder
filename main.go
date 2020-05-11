@@ -28,10 +28,6 @@ func main() {
 	if err != nil {
 		logger.Panic(err)
 	}
-
-	fmt.Println("forward:", conn.RemoteAddr().(*net.TCPAddr).IP, "-->", conn.LocalAddr(), "-->", "47.52.114.182:80")
-	go copyIO(conn, proxy, 1)
-	go copyIO(proxy, conn, 2)
 }
 
 func init() {
