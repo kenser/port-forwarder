@@ -10,7 +10,7 @@ import (
 
 // network: tcp, tcp4, tcp6, udp, udp4, udp6, ip, ip4, ip6, unix, unixgram, unixpacket
 // listenAddress: :8080, 127.0.0.1:8080
-func New(network, listenAddress string, listenPort int, targetAddress string, targetPort int) (err error) {
+func New2(network, listenAddress string, listenPort int, targetAddress string, targetPort int) (err error) {
 	var quit = make(chan struct{})
 	listen := fmt.Sprintf("%s:%d", listenAddress, listenPort)
 	ln, err := net.Listen(network, listen)

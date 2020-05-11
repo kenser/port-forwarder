@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"github.com/cloverzrg/go-portforward/config"
-	"github.com/cloverzrg/go-portforward/forwarding"
 	"github.com/cloverzrg/go-portforward/logger"
 	"github.com/cloverzrg/go-portforward/web"
 )
@@ -25,7 +24,8 @@ var (
 
 func main() {
 	var err error
-	err = forwarding.New("tcp", "127.0.0.1", 8080, "47.52.114.182", 80)
+	//a := forwarding.New()
+	//a.ForwardPorts()
 	if err != nil {
 		logger.Panic(err)
 	}
