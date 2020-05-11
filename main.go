@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"github.com/cloverzrg/go-portforward/logger"
 	"io"
 	"net"
 	"time"
@@ -44,7 +44,7 @@ func handleRequest(conn net.Conn) {
 		panic(err)
 	}
 
-	fmt.Println("forward:", conn.RemoteAddr(), "-->", conn.LocalAddr(), "-->", "47.52.114.182:80")
+	logger.Info("forward:", conn.RemoteAddr(), "-->", conn.LocalAddr(), "-->", "47.52.114.182:80")
 	go copyIO(conn, proxy, 1)
 	go copyIO(proxy, conn, 2)
 }
@@ -57,9 +57,9 @@ func copyIO(src, dest net.Conn, connType int) {
 	n, _ = io.Copy(src, dest)
 	end := time.Now()
 	if connType == 1 {
-		fmt.Printf("%s --> %s conn close, 发送 %d bytes, dur %+v\n", src.LocalAddr(), dest.RemoteAddr(), n, end.Sub(start))
+		logger.Info("%s --> %s conn close, 发送 %d bytes, dur %+v\n", src.LocalAddr(), dest.RemoteAddr(), n, end.Sub(start))
 	} else {
-		fmt.Printf("%s --> %s conn close, 接收 %d bytes, dur %+v\n", src.RemoteAddr(), dest.LocalAddr(), n, end.Sub(start))
+		logger.Info("%s --> %s conn close, 接收 %d bytes, dur %+v\n", src.RemoteAddr(), dest.LocalAddr(), n, end.Sub(start))
 	}
 
 }
