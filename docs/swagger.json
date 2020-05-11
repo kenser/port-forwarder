@@ -1,0 +1,82 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "go-portforward",
+        "contact": {
+            "name": "API Support",
+            "url": "https://github.com/cloverzrg/go-portforward",
+            "email": "cloverzrg@gmail.com"
+        },
+        "license": {
+            "name": "go-portforward"
+        },
+        "version": "1.0"
+    },
+    "paths": {
+        "/v1/network/interfaces": {
+            "get": {
+                "description": "\"\"",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "network"
+                ],
+                "summary": "get network interface list",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/resp.DataResp"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/dto.NetworkInterface"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "dto.NetworkInterface": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "default_gateway": {
+                    "type": "boolean"
+                },
+                "desc": {
+                    "type": "string"
+                }
+            }
+        },
+        "resp.DataResp": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "type": "object"
+                },
+                "msg": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
