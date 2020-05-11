@@ -6,6 +6,7 @@ import (
 	"github.com/cloverzrg/go-portforward/forwarding"
 	"github.com/cloverzrg/go-portforward/logger"
 	"github.com/cloverzrg/go-portforward/web"
+	"time"
 )
 
 // @title go-portforward
@@ -25,11 +26,18 @@ var (
 
 func main() {
 	var err error
-	a := forwarding.New2()
-	//a.Close()
-	if err != nil {
-		logger.Panic(err)
-	}
+	c := make(chan struct{})
+	go func() {
+		err = forwarding.New2("tcp", "127.0.0.1", 8080, "47.52.114.182", 80, c)
+		//a.Close()
+		if err != nil {
+			logger.Panic(err)
+		}
+	}()
+
+	time.Sleep(10*time.Second)
+	c <- struct{}{}
+
 	err = web.Start()
 	if err != nil {
 		logger.Panic(err)

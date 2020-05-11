@@ -9,5 +9,6 @@ require (
 	github.com/sirupsen/logrus v1.6.0
 	github.com/swaggo/gin-swagger v1.2.0
 	github.com/swaggo/swag v1.5.1
-	k8s.io/api v0.18.2 // indirect
+	k8s.io/api v0.18.2
+	k8s.io/apimachinery v0.18.2
 )
