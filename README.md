@@ -3,6 +3,7 @@ not released
 
 ### feature
 - dashboard manage
-- access control by casbin
+- multiple users
+- port & interface permission control
 - flow analysis
 - support multi interface
