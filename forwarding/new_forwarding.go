@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-// network: tcp, tcp4, tcp6, udp, udp4, udp6, ip, ip4, ip6, unix, unixgram, unixpacket
+// network:
 // listenAddress + listenPort: :8080, 127.0.0.1:8080
 func New2(network, listenAddress string, listenPort int, targetAddress string, targetPort int, stopChan chan struct{}) (err error) {
 	listen := fmt.Sprintf("%s:%d", listenAddress, listenPort)
@@ -89,12 +89,23 @@ func handleRequest(network string, targetAddress string, targetPort int, conn ne
 	}()
 
 	logger.Infof("forward:%v-->%v-->%v", conn.RemoteAddr(), conn.LocalAddr(), target)
-	go copyIO(conn, proxy, 1)
-	go copyIO(proxy, conn, 2)
-	<-stopChan
+	c1 := make(chan struct{})
+	c2 := make(chan struct{})
+	go copyIO(conn, proxy, 1, c1)
+	go copyIO(proxy, conn, 2, c2)
+
+	select {
+	case <-c1:
+	case <-c2:
+	case <-stopChan:
+	}
+
 }
 
-func copyIO(src, dest net.Conn, connType int) {
+func copyIO(src, dest net.Conn, connType int, c chan struct{}) {
+	defer func() {
+		c <- struct{}{}
+	}()
 	var n int64
 	start := time.Now()
 	n, _ = io.Copy(src, dest)
