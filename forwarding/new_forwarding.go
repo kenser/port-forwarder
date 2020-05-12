@@ -38,11 +38,7 @@ func New2(network, listenAddress string, listenPort int, targetAddress string, t
 
 	go func() {
 		defer func() {
-			var err error
-			err = ln.Close()
-			if err != nil {
-				logger.Error(err)
-			}
+			_ = ln.Close()
 		}()
 		for {
 			conn, err := ln.Accept()
