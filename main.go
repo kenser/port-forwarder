@@ -35,7 +35,7 @@ func main() {
 		}
 	}()
 
-	time.Sleep(10*time.Second)
+	time.Sleep(10 * time.Second)
 	c <- struct{}{}
 
 	err = web.Start()

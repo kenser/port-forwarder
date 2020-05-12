@@ -50,7 +50,6 @@ func GetNetworkInterfaces(c *gin.Context) {
 	c.JSON(resp.Data(list))
 }
 
-
 func AddForward(c *gin.Context) {
 
 }

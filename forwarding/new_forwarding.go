@@ -9,7 +9,7 @@ import (
 )
 
 // network: tcp, tcp4, tcp6, udp, udp4, udp6, ip, ip4, ip6, unix, unixgram, unixpacket
-// listenAddress: :8080, 127.0.0.1:8080
+// listenAddress + listenPort: :8080, 127.0.0.1:8080
 func New2(network, listenAddress string, listenPort int, targetAddress string, targetPort int, stopChan chan struct{}) (err error) {
 	listen := fmt.Sprintf("%s:%d", listenAddress, listenPort)
 	ln, err := net.Listen(network, listen)
@@ -38,18 +38,23 @@ func New2(network, listenAddress string, listenPort int, targetAddress string, t
 
 	go func() {
 		defer func() {
-			select {
-			case <-stopChan:
-				logger.Info("stopChan had closed")
-			case <-time.After(3 * time.Second):
-				logger.Info("now send stop signal to stopChan")
-				stopChan <- struct{}{}
+			var err error
+			err = ln.Close()
+			if err != nil {
+				logger.Error(err)
 			}
 		}()
 		for {
 			conn, err := ln.Accept()
 			if err != nil {
-				logger.Error(err)
+				select {
+				case <-stopChan:
+					logger.Info("stopChan had closed")
+				case <-time.After(1 * time.Second):
+					logger.Error(err)
+					logger.Info("now send stop signal to stopChan")
+					stopChan <- struct{}{}
+				}
 				return
 			}
 			connChan <- conn
