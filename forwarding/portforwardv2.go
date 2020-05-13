@@ -11,22 +11,25 @@ import (
 )
 
 type PortForward struct {
-	Network            string // listen network:tcp, tcp4, tcp6, udp, udp4, udp6, ip, ip4, ip6, unix, unixgram, unixpacket
-	ListenAddress      string // '0.0.0.0','127.0.0.1', ''
-	ListenPort         int
-	Listener           net.Listener
-	TargetAddress      string        // forward target ip
-	TargetPort         int           // forward target port
-	StopChan           chan struct{} // stop chan, when received will stop listen and close all conn
-	ConnChan           chan net.Conn // conn chan for new accepted conn
-	ConnMap            map[uint]net.Conn
-	ConnMapPointer     uint
-	ConnMapPointerLock sync.Mutex
+	Network          string // listen network:tcp, tcp4, tcp6, udp, udp4, udp6, ip, ip4, ip6, unix, unixgram, unixpacket
+	ListenAddress    string // '0.0.0.0','127.0.0.1', ''
+	ListenPort       int
+	Listener         net.Listener
+	TargetAddress    string        // forward target ip
+	TargetPort       int           // forward target port
+	StopChan         chan struct{} // stop chan, when received will stop listen and close all conn
+	ConnChan         chan net.Conn // conn chan for new accepted conn
+	ConnMap          map[uint]net.Conn
+	ConnMapPointer   uint
+	Mutex            sync.Mutex
+	ConnCount        uint
+	ClosedCount      uint
+	CurrentConnCount uint
 }
 
 func (pf *PortForward) nextConnMapPointer() uint {
-	pf.ConnMapPointerLock.Lock()
-	defer pf.ConnMapPointerLock.Unlock()
+	pf.Mutex.Lock()
+	defer pf.Mutex.Unlock()
 	pf.ConnMapPointer = (pf.ConnMapPointer + 1) % math.MaxUint32
 	return pf.ConnMapPointer
 }
@@ -38,7 +41,7 @@ func New3(network, listenAddress string, listenPort int, targetAddress string, t
 		ListenPort:    listenPort,
 		TargetAddress: targetAddress,
 		TargetPort:    targetPort,
-		ConnChan:      make(chan net.Conn, 100), // 100
+		ConnChan:      make(chan net.Conn, 100), // 100 buffer
 		ConnMap:       make(map[uint]net.Conn),
 		StopChan:      make(chan struct{}),
 	}
@@ -46,10 +49,6 @@ func New3(network, listenAddress string, listenPort int, targetAddress string, t
 }
 
 func (pf *PortForward) Start() (err error) {
-	var mu sync.Mutex
-	a := sync.NewCond(&mu)
-	a.Broadcast()
-	a.Wait()
 	listen := fmt.Sprintf("%s:%d", pf.ListenAddress, pf.ListenPort)
 	pf.Listener, err = net.Listen(pf.Network, listen)
 	if err != nil {
@@ -59,7 +58,7 @@ func (pf *PortForward) Start() (err error) {
 	logger.Infof("start forwarding:%s:%d -> %s:%d", pf.ListenAddress, pf.ListenPort, pf.TargetAddress, pf.TargetPort)
 
 	go func() {
-		defer pf.Stop()
+		//defer pf.Stop()
 		for {
 			conn, err := pf.Listener.Accept()
 			if err != nil {
@@ -77,24 +76,50 @@ func (pf *PortForward) Start() (err error) {
 		}
 	}()
 
-	for {
-		select {
-		case <-pf.StopChan:
-			return
-		case conn := <-pf.ConnChan:
-			go pf.handleRequest(conn, pf.nextConnMapPointer())
+	go func() {
+		for {
+			select {
+			case <-pf.StopChan:
+				return
+			case conn := <-pf.ConnChan:
+				pf.ConnCount++
+				go pf.handleRequest(conn, pf.nextConnMapPointer())
+			}
 		}
-	}
+	}()
+	return
+}
+
+func (pf *PortForward) AddConn(id uint, conn net.Conn) {
+	pf.Mutex.Lock()
+	defer pf.Mutex.Unlock()
+	pf.ConnMap[id] = conn
+}
+
+func (pf *PortForward) DelConn(id uint) {
+	pf.Mutex.Lock()
+	defer pf.Mutex.Unlock()
+	delete(pf.ConnMap, id)
 }
 
 func (pf *PortForward) handleRequest(conn net.Conn, id uint) {
+	pf.AddConn(id, conn)
 	defer func() {
 		var err error
-		err = conn.Close()
-		if err != nil {
-			logger.Error(err)
+		select {
+		case <-pf.StopChan:
+			// 通过 Stop() 关闭
+		case <-time.After(5 * time.Millisecond):
+			// 正常关闭
+			err = conn.Close()
+			if err != nil {
+				logger.Errorf("close conn err:", id, err)
+			} else {
+				logger.Infof("conn closed(%d)", id)
+			}
+			pf.DelConn(id)
 		}
-		delete(pf.ConnMap, id)
+
 	}()
 	target := fmt.Sprintf("%s:%d", pf.TargetAddress, pf.TargetPort)
 	proxy, err := net.Dial(pf.Network, target)
@@ -102,16 +127,24 @@ func (pf *PortForward) handleRequest(conn net.Conn, id uint) {
 		logger.Error(err)
 		return
 	}
-	pf.ConnMap[pf.nextConnMapPointer()] = proxy
+	//proxyId := pf.nextConnMapPointer()
+	//pf.ConnMap[proxyId] = proxy
 	defer func() {
 		var err error
-		err = proxy.Close()
-		if err != nil {
-			logger.Error(err)
+		if proxy != nil {
+			err = proxy.Close()
+			//logger.Infof("conn closed(%d)", proxyId)
+			if err != nil {
+				logger.Errorf("close proxy conn(%d) err:", id, err)
+			} else {
+				logger.Infof("proxy conn closed(%d)", id)
+			}
+		} else {
+			logger.Infof("proxy conn had closed(%d)", id)
 		}
 	}()
 
-	logger.Infof("forward:%v-->%v-->%v", conn.RemoteAddr(), conn.LocalAddr(), target)
+	logger.Infof("new connection(%d):%v-->%v-->%v", id, conn.RemoteAddr(), conn.LocalAddr(), target)
 	c1 := make(chan struct{})
 	c2 := make(chan struct{})
 	go pf.copyIO(conn, proxy, 1, c1)
@@ -120,28 +153,27 @@ func (pf *PortForward) handleRequest(conn net.Conn, id uint) {
 	select {
 	case <-c1:
 	case <-c2:
-	case <-pf.StopChan:
 	}
-
 }
 
 func (pf *PortForward) copyIO(src, dest net.Conn, connType int, c chan struct{}) {
 	defer func() {
 		c <- struct{}{}
 	}()
-	var n int64
-	start := time.Now()
-	n, _ = io.Copy(src, dest)
-	end := time.Now()
-	if connType == 1 {
-		logger.Infof("%s --> %s conn close, 发送 %d bytes, dur %+v\n", src.LocalAddr(), dest.RemoteAddr(), n, end.Sub(start))
-	} else {
-		logger.Infof("%s --> %s conn close, 接收 %d bytes, dur %+v\n", src.RemoteAddr(), dest.LocalAddr(), n, end.Sub(start))
-	}
+	//var n int64
+	//start := time.Now()
+	_, _ = io.Copy(src, dest)
+	//end := time.Now()
+	//if connType == 1 {
+	//	logger.Infof("%s --> %s conn close, 发送 %d bytes, dur %+v\n", src.LocalAddr(), dest.RemoteAddr(), n, end.Sub(start))
+	//} else {
+	//	logger.Infof("%s --> %s conn close, 接收 %d bytes, dur %+v\n", src.RemoteAddr(), dest.LocalAddr(), n, end.Sub(start))
+	//}
 
 }
 
 func (pf *PortForward) Stop() (err error) {
+	logger.Info("forward stop")
 	pf.StopChan <- struct{}{}
 	// close channel
 	close(pf.ConnChan)
@@ -160,11 +192,22 @@ func (pf *PortForward) Stop() (err error) {
 		logger.Error(err)
 	}
 	// stop all connection
-	for _, v := range pf.ConnMap {
+	logger.Infof("map len:%d", len(pf.ConnMap))
+	for k, v := range pf.ConnMap {
 		if v != nil {
-			_ = v.Close()
+			err = v.Close()
+			if err != nil {
+				logger.Errorf("close conn(%d) by Stop() err:", k, err)
+			} else {
+				logger.Infof("conn closed(%d) by Stop()", k)
+			}
+
+		} else {
+			logger.Infof("conn(%d) is closed(%d)", k)
 		}
 	}
+
+	time.Sleep(100 * time.Millisecond)
 
 	return err
 }
