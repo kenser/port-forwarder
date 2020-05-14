@@ -3,10 +3,8 @@ package main
 import (
 	"fmt"
 	"github.com/cloverzrg/go-portforward/config"
-	"github.com/cloverzrg/go-portforward/forwarding"
 	"github.com/cloverzrg/go-portforward/logger"
 	"github.com/cloverzrg/go-portforward/web"
-	"time"
 )
 
 // @title go-portforward
@@ -26,21 +24,6 @@ var (
 
 func main() {
 	var err error
-	for i:= 0; i< 100; i++ {
-		logger.Info(i)
-	}
-	pf, _ := forwarding.New3("tcp", "", 8080, "47.52.114.182", 80)
-	err = pf.Start()
-	if err != nil {
-		logger.Error(err)
-	}
-	time.Sleep(15 * time.Second)
-	err = pf.Stop()
-	if err != nil {
-		logger.Error(err)
-	}
-	return
-
 	err = web.Start()
 	if err != nil {
 		logger.Panic(err)
