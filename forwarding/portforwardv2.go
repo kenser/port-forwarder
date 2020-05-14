@@ -204,7 +204,7 @@ func (pf *PortForward) Stop() (err error) {
 	}
 	pf.IsStopped = true
 	// stop all connection
-	logger.Infof("map len:%d", len(pf.ConnMap))
+	logger.Infof("conn map len:%d", len(pf.ConnMap))
 	for k, v := range pf.ConnMap {
 		err = v.Close()
 		if err != nil {
