@@ -1,6 +1,7 @@
 package forwarding
 
 import (
+	"fmt"
 	"github.com/cloverzrg/go-portforward/logger"
 	"net"
 	"testing"
@@ -32,7 +33,11 @@ func TestPortForward(t *testing.T) {
 	if err != nil {
 		logger.Error(err)
 	}
-	time.Sleep(15 * time.Second)
+	for i:= 0; i<15;i++ {
+		time.Sleep(1 * time.Second)
+		fmt.Printf("conn count:%d, cur conn:%d\n", pf.ConnCount, pf.CurrentConnCount)
+	}
+
 	err = pf.Stop()
 	if err != nil {
 		logger.Error(err)

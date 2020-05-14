@@ -23,7 +23,6 @@ type PortForward struct {
 	ConnMapPointer   uint
 	Mutex            sync.Mutex
 	ConnCount        uint
-	ClosedCount      uint
 	CurrentConnCount uint
 	IsStopped        bool
 }
@@ -76,7 +75,6 @@ func (pf *PortForward) Start() (err error) {
 	logger.Infof("start forwarding:%s:%d -> %s:%d", pf.ListenAddress, pf.ListenPort, pf.TargetAddress, pf.TargetPort)
 
 	go func() {
-		//defer pf.Stop()
 		for {
 			conn, err := pf.Listener.Accept()
 			if err != nil {
@@ -101,6 +99,7 @@ func (pf *PortForward) Start() (err error) {
 				return
 			case conn := <-pf.ConnChan:
 				pf.ConnCount++
+				pf.CurrentConnCount++
 				go pf.handleRequest(conn, pf.nextConnMapPointer())
 			}
 		}
@@ -112,6 +111,12 @@ func (pf *PortForward) AddConn(id uint, conn net.Conn) {
 	pf.Mutex.Lock()
 	defer pf.Mutex.Unlock()
 	pf.ConnMap[id] = conn
+}
+
+func (pf *PortForward) DecCurrentConnCount() {
+	pf.Mutex.Lock()
+	defer pf.Mutex.Unlock()
+	pf.CurrentConnCount--
 }
 
 func (pf *PortForward) DelConn(id uint) {
@@ -128,11 +133,10 @@ func (pf *PortForward) handleRequest(conn net.Conn, id uint) {
 			err = conn.Close()
 			if err != nil {
 				logger.Errorf("close conn err:", id, err)
-			} else {
-				logger.Infof("conn closed(%d)", id)
 			}
 			pf.DelConn(id)
 		}
+		pf.DecCurrentConnCount()
 	}()
 	target := fmt.Sprintf("[%s]:%d", pf.TargetAddress, pf.TargetPort)
 	proxy, err := net.Dial(pf.Network, target)
@@ -148,8 +152,6 @@ func (pf *PortForward) handleRequest(conn net.Conn, id uint) {
 		//logger.Infof("conn closed(%d)", proxyId)
 		if err != nil {
 			logger.Errorf("close proxy conn(%d) err:", id, err)
-		} else {
-			logger.Infof("proxy conn closed(%d)", id)
 		}
 	}()
 
@@ -207,8 +209,6 @@ func (pf *PortForward) Stop() (err error) {
 		err = v.Close()
 		if err != nil {
 			logger.Errorf("close conn(%d) by Stop() err:", k, err)
-		} else {
-			logger.Infof("conn closed(%d) by Stop()", k)
 		}
 	}
 
