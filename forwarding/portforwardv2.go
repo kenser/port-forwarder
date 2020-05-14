@@ -47,6 +47,12 @@ func New3(network, listenAddress string, listenPort int, targetAddress string, t
 	if targetIP == nil {
 		return pf, fmt.Errorf("targetAddress %s is not a valid IP", targetAddress)
 	}
+	if !(listenPort >= 0 && listenPort <= 65535) {
+		return pf, fmt.Errorf("listenPort %d is invalid", listenPort)
+	}
+	if !(targetPort >= 0 && targetPort <= 65535) {
+		return pf, fmt.Errorf("targetPort %d is invalid", targetPort)
+	}
 	pf = &PortForward{
 		Network:       network,
 		ListenAddress: listenAddress,

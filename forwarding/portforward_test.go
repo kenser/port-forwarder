@@ -24,7 +24,7 @@ func TestDialIPv6(t *testing.T) {
 
 func TestPortForward(t *testing.T) {
 	var err error
-	pf, err := New3("tcp", "", 8080, "47.52.114.182", 80)
+	pf, err := New3("tcp", "127.0.0.1", 8080, "47.52.114.182", 80)
 	if err != nil {
 		t.Error(err)
 	}
@@ -36,5 +36,13 @@ func TestPortForward(t *testing.T) {
 	err = pf.Stop()
 	if err != nil {
 		logger.Error(err)
+	}
+}
+
+func TestDial(t *testing.T) {
+	_, err := net.Dial("tcp", "47.52.114.182:800")
+	if err != nil {
+		logger.Error(err)
+		return
 	}
 }
