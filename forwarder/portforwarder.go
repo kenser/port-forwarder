@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-type PortForward struct {
+type PortForwarder struct {
 	Network          string // listen network:tcp, tcp4, tcp6, udp, udp4, udp6, ip, ip4, ip6, unix, unixgram, unixpacket
 	ListenAddress    string // '0.0.0.0','127.0.0.1', ''
 	ListenPort       int
@@ -27,14 +27,14 @@ type PortForward struct {
 	IsClosed         bool
 }
 
-func (pf *PortForward) nextConnMapPointer() uint {
+func (pf *PortForwarder) nextConnMapPointer() uint {
 	pf.Mutex.Lock()
 	defer pf.Mutex.Unlock()
 	pf.ConnMapPointer = (pf.ConnMapPointer + 1) % math.MaxUint32
 	return pf.ConnMapPointer
 }
 
-func New3(network, listenAddress string, listenPort int, targetAddress string, targetPort int) (pf *PortForward, err error) {
+func New3(network, listenAddress string, listenPort int, targetAddress string, targetPort int) (pf *PortForwarder, err error) {
 	if listenAddress != "" {
 		listenIP := net.ParseIP(listenAddress)
 		if listenIP == nil {
@@ -52,7 +52,7 @@ func New3(network, listenAddress string, listenPort int, targetAddress string, t
 	if !(targetPort >= 0 && targetPort <= 65535) {
 		return pf, fmt.Errorf("targetPort %d is invalid", targetPort)
 	}
-	pf = &PortForward{
+	pf = &PortForwarder{
 		Network:       network,
 		ListenAddress: listenAddress,
 		ListenPort:    listenPort,
@@ -65,7 +65,7 @@ func New3(network, listenAddress string, listenPort int, targetAddress string, t
 	return pf, err
 }
 
-func (pf *PortForward) Start() (err error) {
+func (pf *PortForwarder) Start() (err error) {
 	if pf.IsClosed {
 		return fmt.Errorf("the portforwarder id closed. please use New() to new one")
 	}
@@ -110,25 +110,25 @@ func (pf *PortForward) Start() (err error) {
 	return
 }
 
-func (pf *PortForward) AddConn(id uint, conn net.Conn) {
+func (pf *PortForwarder) AddConn(id uint, conn net.Conn) {
 	pf.Mutex.Lock()
 	defer pf.Mutex.Unlock()
 	pf.ConnMap[id] = conn
 }
 
-func (pf *PortForward) DecCurrentConnCount() {
+func (pf *PortForwarder) DecCurrentConnCount() {
 	pf.Mutex.Lock()
 	defer pf.Mutex.Unlock()
 	pf.CurrentConnCount--
 }
 
-func (pf *PortForward) DelConn(id uint) {
+func (pf *PortForwarder) DelConn(id uint) {
 	pf.Mutex.Lock()
 	defer pf.Mutex.Unlock()
 	delete(pf.ConnMap, id)
 }
 
-func (pf *PortForward) handleRequest(conn net.Conn, id uint) {
+func (pf *PortForwarder) handleRequest(conn net.Conn, id uint) {
 	pf.AddConn(id, conn)
 	defer func() {
 		var err error
@@ -170,7 +170,7 @@ func (pf *PortForward) handleRequest(conn net.Conn, id uint) {
 	}
 }
 
-func (pf *PortForward) copyIO(src, dest net.Conn, connType int, c chan struct{}) {
+func (pf *PortForwarder) copyIO(src, dest net.Conn, connType int, c chan struct{}) {
 	defer func() {
 		c <- struct{}{}
 	}()
@@ -186,7 +186,7 @@ func (pf *PortForward) copyIO(src, dest net.Conn, connType int, c chan struct{})
 
 }
 
-func (pf *PortForward) Close() (err error) {
+func (pf *PortForwarder) Close() (err error) {
 	// stop listen
 	err = pf.Listener.Close()
 	if err != nil {
