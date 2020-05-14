@@ -25,7 +25,7 @@ func TestDialIPv6(t *testing.T) {
 
 func TestPortForward(t *testing.T) {
 	var err error
-	pf, err := New3("tcp", "127.0.0.1", 8080, "47.52.114.182", 80)
+	pf, err := New("tcp", "127.0.0.1", 8080, "47.52.114.182", 80)
 	if err != nil {
 		t.Error(err)
 	}
@@ -33,20 +33,11 @@ func TestPortForward(t *testing.T) {
 	if err != nil {
 		logger.Error(err)
 	}
-	for i:= 0; i<4;i++ {
+	for i:= 0; i<10;i++ {
 		time.Sleep(1 * time.Second)
 		fmt.Printf("conn count:%d, cur conn:%d\n", pf.ConnCount, pf.CurrentConnCount)
 	}
 
-	err = pf.Close()
-	if err != nil {
-		logger.Error(err)
-	}
-	err = pf.Start()
-	if err != nil {
-		logger.Error(err)
-	}
-	time.Sleep(2 * time.Second)
 	err = pf.Close()
 	if err != nil {
 		logger.Error(err)

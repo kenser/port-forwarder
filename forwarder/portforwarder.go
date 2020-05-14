@@ -34,7 +34,29 @@ func (pf *PortForwarder) nextConnMapPointer() uint {
 	return pf.ConnMapPointer
 }
 
-func New3(network, listenAddress string, listenPort int, targetAddress string, targetPort int) (pf *PortForwarder, err error) {
+func (pf *PortForwarder) checkListenPortAvailable() error {
+	var err error
+	listen := fmt.Sprintf("[%s]:%d", pf.ListenAddress, pf.ListenPort)
+	li, err := net.Listen(pf.Network, listen)
+	if err != nil {
+		return err
+	}
+	li.Close()
+	return err
+}
+
+func (pf *PortForwarder) checkTargetPortAvailable() error {
+	var err error
+	listen := fmt.Sprintf("[%s]:%d", pf.TargetAddress, pf.TargetPort)
+	li, err := net.Dial(pf.Network, listen)
+	if err != nil {
+		return err
+	}
+	li.Close()
+	return err
+}
+
+func New(network, listenAddress string, listenPort int, targetAddress string, targetPort int) (pf *PortForwarder, err error) {
 	if listenAddress != "" {
 		listenIP := net.ParseIP(listenAddress)
 		if listenIP == nil {
@@ -52,6 +74,7 @@ func New3(network, listenAddress string, listenPort int, targetAddress string, t
 	if !(targetPort >= 0 && targetPort <= 65535) {
 		return pf, fmt.Errorf("targetPort %d is invalid", targetPort)
 	}
+
 	pf = &PortForwarder{
 		Network:       network,
 		ListenAddress: listenAddress,
@@ -61,6 +84,16 @@ func New3(network, listenAddress string, listenPort int, targetAddress string, t
 		ConnChan:      make(chan net.Conn, 100), // 100 buffer
 		ConnMap:       make(map[uint]net.Conn),
 		StopChan:      make(chan struct{}),
+	}
+
+	err = pf.checkListenPortAvailable()
+	if err != nil {
+		return nil, fmt.Errorf("the listen port is not available")
+	}
+
+	err = pf.checkTargetPortAvailable()
+	if err != nil {
+		logger.Warn("target port is not available:", err)
 	}
 	return pf, err
 }
@@ -216,6 +249,6 @@ func (pf *PortForwarder) Close() (err error) {
 	pf.ConnMap = nil
 
 	time.Sleep(100 * time.Millisecond)
-
+	logger.Info("close port forwarder done")
 	return err
 }

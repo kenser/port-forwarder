@@ -14,3 +14,15 @@ func GetLocalHostAddress() (ip string) {
 	localAddr := conn.LocalAddr().(*net.UDPAddr)
 	return localAddr.IP.String()
 }
+
+
+func CheckPortIsAvailable(network string, address string) bool {
+	ln, err := net.Listen(network, address)
+
+	if err != nil {
+		return false
+	}
+
+	_ = ln.Close()
+	return true
+}
