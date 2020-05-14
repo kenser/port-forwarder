@@ -1,4 +1,4 @@
-package forwarding
+package forwarder
 
 import (
 	"fmt"
@@ -33,12 +33,21 @@ func TestPortForward(t *testing.T) {
 	if err != nil {
 		logger.Error(err)
 	}
-	for i:= 0; i<15;i++ {
+	for i:= 0; i<4;i++ {
 		time.Sleep(1 * time.Second)
 		fmt.Printf("conn count:%d, cur conn:%d\n", pf.ConnCount, pf.CurrentConnCount)
 	}
 
-	err = pf.Stop()
+	err = pf.Close()
+	if err != nil {
+		logger.Error(err)
+	}
+	err = pf.Start()
+	if err != nil {
+		logger.Error(err)
+	}
+	time.Sleep(2 * time.Second)
+	err = pf.Close()
 	if err != nil {
 		logger.Error(err)
 	}

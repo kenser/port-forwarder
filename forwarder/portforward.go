@@ -1,4 +1,4 @@
-package forwarding
+package forwarder
 
 /*
 Copyright 2015 The Kubernetes Authors.

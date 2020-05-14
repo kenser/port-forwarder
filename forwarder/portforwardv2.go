@@ -1,4 +1,4 @@
-package forwarding
+package forwarder
 
 import (
 	"fmt"
@@ -24,7 +24,7 @@ type PortForward struct {
 	Mutex            sync.Mutex
 	ConnCount        uint
 	CurrentConnCount uint
-	IsStopped        bool
+	IsClosed         bool
 }
 
 func (pf *PortForward) nextConnMapPointer() uint {
@@ -66,6 +66,9 @@ func New3(network, listenAddress string, listenPort int, targetAddress string, t
 }
 
 func (pf *PortForward) Start() (err error) {
+	if pf.IsClosed {
+		return fmt.Errorf("the portforwarder id closed. please use New() to new one")
+	}
 	listen := fmt.Sprintf("[%s]:%d", pf.ListenAddress, pf.ListenPort)
 	pf.Listener, err = net.Listen(pf.Network, listen)
 	if err != nil {
@@ -129,7 +132,7 @@ func (pf *PortForward) handleRequest(conn net.Conn, id uint) {
 	pf.AddConn(id, conn)
 	defer func() {
 		var err error
-		if !pf.IsStopped {
+		if !pf.IsClosed {
 			err = conn.Close()
 			if err != nil {
 				logger.Errorf("close conn err:", id, err)
@@ -183,13 +186,16 @@ func (pf *PortForward) copyIO(src, dest net.Conn, connType int, c chan struct{})
 
 }
 
-func (pf *PortForward) Stop() (err error) {
-	logger.Info("forward stop")
+func (pf *PortForward) Close() (err error) {
+	// stop listen
+	err = pf.Listener.Close()
+	if err != nil {
+		logger.Error(err)
+	}
 	pf.StopChan <- struct{}{}
 	// close channel
 	close(pf.ConnChan)
 	close(pf.StopChan)
-
 	for {
 		_, ok := <-pf.ConnChan
 		if !ok {
@@ -197,20 +203,17 @@ func (pf *PortForward) Stop() (err error) {
 		}
 	}
 
-	// stop listen
-	err = pf.Listener.Close()
-	if err != nil {
-		logger.Error(err)
-	}
-	pf.IsStopped = true
+	pf.IsClosed = true
 	// stop all connection
 	logger.Infof("conn map len:%d", len(pf.ConnMap))
 	for k, v := range pf.ConnMap {
 		err = v.Close()
 		if err != nil {
-			logger.Errorf("close conn(%d) by Stop() err:", k, err)
+			logger.Errorf("close conn(%d) by Close() err:", k, err)
 		}
 	}
+
+	pf.ConnMap = nil
 
 	time.Sleep(100 * time.Millisecond)
 
