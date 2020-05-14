@@ -25,6 +25,7 @@ type PortForward struct {
 	ConnCount        uint
 	ClosedCount      uint
 	CurrentConnCount uint
+	IsStopped        bool
 }
 
 func (pf *PortForward) nextConnMapPointer() uint {
@@ -34,7 +35,18 @@ func (pf *PortForward) nextConnMapPointer() uint {
 	return pf.ConnMapPointer
 }
 
-func New3(network, listenAddress string, listenPort int, targetAddress string, targetPort int) (pf *PortForward) {
+func New3(network, listenAddress string, listenPort int, targetAddress string, targetPort int) (pf *PortForward, err error) {
+	if listenAddress != "" {
+		listenIP := net.ParseIP(listenAddress)
+		if listenIP == nil {
+			return pf, fmt.Errorf("listenAddress %s is not a valid IP", listenAddress)
+		}
+		listenAddress = listenIP.String()
+	}
+	targetIP := net.ParseIP(targetAddress)
+	if targetIP == nil {
+		return pf, fmt.Errorf("targetAddress %s is not a valid IP", targetAddress)
+	}
 	pf = &PortForward{
 		Network:       network,
 		ListenAddress: listenAddress,
@@ -45,11 +57,11 @@ func New3(network, listenAddress string, listenPort int, targetAddress string, t
 		ConnMap:       make(map[uint]net.Conn),
 		StopChan:      make(chan struct{}),
 	}
-	return pf
+	return pf, err
 }
 
 func (pf *PortForward) Start() (err error) {
-	listen := fmt.Sprintf("%s:%d", pf.ListenAddress, pf.ListenPort)
+	listen := fmt.Sprintf("[%s]:%d", pf.ListenAddress, pf.ListenPort)
 	pf.Listener, err = net.Listen(pf.Network, listen)
 	if err != nil {
 		logger.Error(err)
@@ -106,11 +118,7 @@ func (pf *PortForward) handleRequest(conn net.Conn, id uint) {
 	pf.AddConn(id, conn)
 	defer func() {
 		var err error
-		select {
-		case <-pf.StopChan:
-			// 通过 Stop() 关闭
-		case <-time.After(5 * time.Millisecond):
-			// 正常关闭
+		if !pf.IsStopped {
 			err = conn.Close()
 			if err != nil {
 				logger.Errorf("close conn err:", id, err)
@@ -119,9 +127,8 @@ func (pf *PortForward) handleRequest(conn net.Conn, id uint) {
 			}
 			pf.DelConn(id)
 		}
-
 	}()
-	target := fmt.Sprintf("%s:%d", pf.TargetAddress, pf.TargetPort)
+	target := fmt.Sprintf("[%s]:%d", pf.TargetAddress, pf.TargetPort)
 	proxy, err := net.Dial(pf.Network, target)
 	if err != nil {
 		logger.Error(err)
@@ -131,16 +138,12 @@ func (pf *PortForward) handleRequest(conn net.Conn, id uint) {
 	//pf.ConnMap[proxyId] = proxy
 	defer func() {
 		var err error
-		if proxy != nil {
-			err = proxy.Close()
-			//logger.Infof("conn closed(%d)", proxyId)
-			if err != nil {
-				logger.Errorf("close proxy conn(%d) err:", id, err)
-			} else {
-				logger.Infof("proxy conn closed(%d)", id)
-			}
+		err = proxy.Close()
+		//logger.Infof("conn closed(%d)", proxyId)
+		if err != nil {
+			logger.Errorf("close proxy conn(%d) err:", id, err)
 		} else {
-			logger.Infof("proxy conn had closed(%d)", id)
+			logger.Infof("proxy conn closed(%d)", id)
 		}
 	}()
 
@@ -191,19 +194,15 @@ func (pf *PortForward) Stop() (err error) {
 	if err != nil {
 		logger.Error(err)
 	}
+	pf.IsStopped = true
 	// stop all connection
 	logger.Infof("map len:%d", len(pf.ConnMap))
 	for k, v := range pf.ConnMap {
-		if v != nil {
-			err = v.Close()
-			if err != nil {
-				logger.Errorf("close conn(%d) by Stop() err:", k, err)
-			} else {
-				logger.Infof("conn closed(%d) by Stop()", k)
-			}
-
+		err = v.Close()
+		if err != nil {
+			logger.Errorf("close conn(%d) by Stop() err:", k, err)
 		} else {
-			logger.Infof("conn(%d) is closed(%d)", k)
+			logger.Infof("conn closed(%d) by Stop()", k)
 		}
 	}
 

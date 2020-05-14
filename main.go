@@ -26,20 +26,10 @@ var (
 
 func main() {
 	var err error
-	//c := make(chan struct{})
-	//go func() {
-	//	err = forwarding.New2("tcp", "127.0.0.1", 8080, "47.52.114.182", 80, c)
-	//	//a.Close()
-	//	if err != nil {
-	//		logger.Panic(err)
-	//	}
-	//}()
-	//
-	//time.Sleep(20 * time.Second)
-	//c <- struct{}{}
-	//time.Sleep(5 * time.Second)
-	//return
-	pf := forwarding.New3("tcp", "", 8080, "47.52.114.182", 80)
+	for i:= 0; i< 100; i++ {
+		logger.Info(i)
+	}
+	pf, _ := forwarding.New3("tcp", "", 8080, "47.52.114.182", 80)
 	err = pf.Start()
 	if err != nil {
 		logger.Error(err)
