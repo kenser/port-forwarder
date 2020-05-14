@@ -88,7 +88,7 @@ func New(network, listenAddress string, listenPort int, targetAddress string, ta
 
 	err = pf.checkListenPortAvailable()
 	if err != nil {
-		return nil, fmt.Errorf("the listen port is not available")
+		return nil, fmt.Errorf("the listen port is not available:%+v", err)
 	}
 
 	err = pf.checkTargetPortAvailable()
