@@ -6,6 +6,7 @@ import (
 	"io"
 	"math"
 	"net"
+	"runtime"
 	"sync"
 	"time"
 )
@@ -25,6 +26,13 @@ type PortForwarder struct {
 	ConnCount        uint
 	CurrentConnCount uint
 	IsClosed         bool
+}
+
+// finalizer is the destructor for Adapter.
+func finalizer(a *PortForwarder) {
+	if a != nil {
+		a.Close()
+	}
 }
 
 func (pf *PortForwarder) nextConnMapPointer() uint {
@@ -95,6 +103,7 @@ func New(network, listenAddress string, listenPort int, targetAddress string, ta
 	if err != nil {
 		logger.Warn("target port is not available:", err)
 	}
+	runtime.SetFinalizer(pf, finalizer)
 	return pf, err
 }
 
