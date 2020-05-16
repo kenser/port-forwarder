@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 	"github.com/cloverzrg/go-portforward/config"
+	"github.com/cloverzrg/go-portforward/db"
 	"github.com/cloverzrg/go-portforward/logger"
+	"github.com/cloverzrg/go-portforward/model"
 	"github.com/cloverzrg/go-portforward/web"
 )
 
@@ -31,6 +33,15 @@ func main() {
 }
 
 func init() {
+	var err error
 	fmt.Printf("BuildTime: %s\nGoVersion: %s\nGitHead: %s\n", BuildTime, GoVersion, GitHead)
 	config.Parse("./config.json")
+	err = db.Connect()
+	if err != nil {
+		logger.Panic(err)
+	}
+	err = model.CreateAllTable()
+	if err != nil {
+		logger.Panic(err)
+	}
 }

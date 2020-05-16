@@ -2,7 +2,10 @@ package dns
 
 import (
 	"errors"
+	"fmt"
+	"github.com/cloverzrg/go-portforward/config"
 	"github.com/miekg/dns"
+	"net"
 )
 
 func getIp(domain string) string {
@@ -36,7 +39,21 @@ func (e *DNSError) Error() string {
 	return s
 }
 
-func LookupIP(host string, resolver string) (ip string, err error) {
+func LookupIP(host string) (ip string, err error) {
+	if net.ParseIP(host) != nil {
+		return net.ParseIP(host).String(), err
+	}
+	resolver := config.Config.Nameserver
+	if resolver == "" {
+		ipArr, err := net.LookupIP(host)
+		if err != nil {
+			return ip, err
+		}
+		if len(ipArr) == 0 {
+			return ip, fmt.Errorf("lookup %s err, no result", host)
+		}
+		return ipArr[0].String(), err
+	}
 	c := dns.Client{}
 	m := dns.Msg{}
 	m.SetQuestion(host+".", dns.TypeA)

@@ -1,4 +1,17 @@
 definitions:
+  dto.AddForward:
+    properties:
+      listenAddress:
+        type: string
+      listenPort:
+        type: integer
+      network:
+        type: string
+      targetAddress:
+        type: string
+      targetPort:
+        type: integer
+    type: object
   dto.NetworkInterface:
     properties:
       address:
@@ -27,6 +40,28 @@ info:
   title: go-portforward
   version: "1.0"
 paths:
+  /v1/forward/:
+    post:
+      consumes:
+      - application/json
+      description: '""'
+      parameters:
+      - description: 请求json
+        in: body
+        name: json
+        required: true
+        schema:
+          $ref: '#/definitions/dto.AddForward'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/resp.DataResp'
+      summary: add a forward and start
+      tags:
+      - network
   /v1/network/interfaces:
     get:
       description: '""'

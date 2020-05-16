@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"github.com/cloverzrg/go-portforward/logger"
+	"github.com/cloverzrg/go-portforward/service/forward"
 	"github.com/cloverzrg/go-portforward/utils"
 	"github.com/cloverzrg/go-portforward/web/dto"
 	"github.com/cloverzrg/go-portforward/web/resp"
@@ -50,6 +52,27 @@ func GetNetworkInterfaces(c *gin.Context) {
 	c.JSON(resp.Data(list))
 }
 
+// @Summary add a forward and start
+// @Description ""
+// @Tags network
+// @Accept  json
+// @Produce  json
+// @Param json body dto.AddForward true "请求json"
+// @Success 200 {object} resp.DataResp{}
+// @Router /v1/forward/ [post]
 func AddForward(c *gin.Context) {
-
+	var req dto.AddForward
+	var err error
+	err = c.BindJSON(&req)
+	if err != nil {
+		logger.Error(err)
+		c.JSON(resp.UnexpectedError(err))
+		return
+	}
+	err = forward.Add(c, req)
+	if err != nil {
+		c.JSON(resp.UnexpectedError(err))
+		return
+	}
+	c.JSON(resp.Data("ok"))
 }

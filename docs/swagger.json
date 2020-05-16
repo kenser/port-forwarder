@@ -13,6 +13,40 @@
         "version": "1.0"
     },
     "paths": {
+        "/v1/forward/": {
+            "post": {
+                "description": "\"\"",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "network"
+                ],
+                "summary": "add a forward and start",
+                "parameters": [
+                    {
+                        "description": "请求json",
+                        "name": "json",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.AddForward"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/resp.DataResp"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/network/interfaces": {
             "get": {
                 "description": "\"\"",
@@ -50,6 +84,26 @@
         }
     },
     "definitions": {
+        "dto.AddForward": {
+            "type": "object",
+            "properties": {
+                "listenAddress": {
+                    "type": "string"
+                },
+                "listenPort": {
+                    "type": "integer"
+                },
+                "network": {
+                    "type": "string"
+                },
+                "targetAddress": {
+                    "type": "string"
+                },
+                "targetPort": {
+                    "type": "integer"
+                }
+            }
+        },
         "dto.NetworkInterface": {
             "type": "object",
             "properties": {

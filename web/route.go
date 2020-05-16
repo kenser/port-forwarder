@@ -14,9 +14,9 @@ func SetupRoute(r *gin.Engine) {
 func setupDefaultRoute(r *gin.RouterGroup) {
 	r.GET("/network/interfaces", controller.GetNetworkInterfaces)
 
-	r.POST("/forward/")
-	r.POST("/forward/stop")
-	r.POST("/forward/start")
+	r.POST("/forward/", controller.AddForward)
+	r.POST("/forward/:id/stop")
+	r.POST("/forward/:id/start")
 	r.GET("/forward/:id")
 	r.DELETE("/forward/:id")
 }
