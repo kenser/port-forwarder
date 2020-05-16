@@ -6,7 +6,6 @@ import (
 	"github.com/cloverzrg/go-portforward/logger"
 	"github.com/cloverzrg/go-portforward/model/forwarddao"
 	"github.com/cloverzrg/go-portforward/portforwarder"
-	"net"
 )
 
 var ForwardingMap map[int]*portforwarder.PortForwarder
@@ -35,13 +34,9 @@ func StartById(ctx context.Context, id int) (err error) {
 			return
 		}
 	}
-	targetIp := data.TargetAddress
-	if net.ParseIP(data.TargetAddress) == nil {
-		// 当识别ip失败,尝试使用dns解析
-		targetIp, err = dns.LookupIP(data.TargetAddress)
-		if err != nil {
-			return err
-		}
+	targetIp, err := dns.LookupIP(data.TargetAddress)
+	if err != nil {
+		return err
 	}
 	newForwarder, err := portforwarder.New(data.Network, data.ListenAddress, data.ListenPort, targetIp, data.TargetPort)
 	if err != nil {
