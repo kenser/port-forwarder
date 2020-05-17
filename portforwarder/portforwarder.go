@@ -30,8 +30,11 @@ type PortForwarder struct {
 
 // finalizer is the destructor for Adapter.
 func finalizer(a *PortForwarder) {
-	if a != nil {
-		a.Close()
+	if a != nil && !a.IsClosed {
+		err := a.Close()
+		if err != nil {
+			logger.Error(err)
+		}
 	}
 }
 
