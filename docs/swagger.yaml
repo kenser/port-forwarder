@@ -62,6 +62,27 @@ paths:
       summary: add a forward and start
       tags:
       - network
+  /v1/forward/{id}/stop:
+    post:
+      consumes:
+      - application/json
+      description: '""'
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/resp.DataResp'
+      summary: add a forward and start
+      tags:
+      - network
   /v1/network/interfaces:
     get:
       description: '""'
