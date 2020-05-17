@@ -36,11 +36,15 @@ func Add(network string, listenAddress string, listenPort int, targetAddress str
 	return data.Id, err
 }
 
-func GetByID(id int) (data Forward, err error) {
+func GetById(id int) (data Forward, err error) {
 	err = db.DB.Table("forwards").Where("id = ?", id).First(&data).Error
 	return data, err
 }
 
-func UpdateByID(id int, data Forward) (err error) {
+func UpdateById(id int, data Forward) (err error) {
 	return db.DB.Table("forwards").Where("id = ?", id).Update(data).Error
+}
+
+func UpdateByIdMap(id int, m map[string]interface{}) (err error) {
+	return db.DB.Table("forwards").Where("id = ?", id).Update(m).Error
 }

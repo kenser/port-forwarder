@@ -22,6 +22,10 @@ func Add(ctx context.Context, req dto.AddForward) (err error) {
 	if err != nil {
 		return err
 	}
+	err = forwarddao.UpdateByIdMap(id, map[string]interface{}{"status": 1})
+	if err != nil {
+		return err
+	}
 	return err
 }
 

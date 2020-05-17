@@ -15,6 +15,23 @@ func init() {
 }
 
 func CloseById(ctx context.Context, id int) (err error) {
+	defer func() {
+		if err != nil {
+			logger.Error(err)
+		}
+	}()
+	if ForwardingMap[id] != nil {
+		err = ForwardingMap[id].Close()
+		if err != nil {
+			return
+		}
+	}
+	forwarder := ForwardingMap[id]
+	err = forwarder.Close()
+	if err != nil {
+		return err
+	}
+	delete(ForwardingMap, id)
 	return err
 }
 
@@ -24,7 +41,7 @@ func StartById(ctx context.Context, id int) (err error) {
 			logger.Error(err)
 		}
 	}()
-	data, err := forwarddao.GetByID(id)
+	data, err := forwarddao.GetById(id)
 	if err != nil {
 		return err
 	}
@@ -48,9 +65,5 @@ func StartById(ctx context.Context, id int) (err error) {
 	}
 	ForwardingMap[data.Id] = newForwarder
 	data.Status = 1
-	err = forwarddao.UpdateByID(data.Id, data)
-	if err != nil {
-		return err
-	}
 	return err
 }
