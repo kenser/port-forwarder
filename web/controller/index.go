@@ -8,6 +8,7 @@ import (
 	"github.com/cloverzrg/go-portforward/web/resp"
 	"github.com/gin-gonic/gin"
 	"net"
+	"strconv"
 )
 
 // @Summary get network interface list
@@ -70,6 +71,31 @@ func AddForward(c *gin.Context) {
 		return
 	}
 	err = forward.Add(c, req)
+	if err != nil {
+		c.JSON(resp.UnexpectedError(err))
+		return
+	}
+	c.JSON(resp.Data("ok"))
+}
+
+// @Summary add a forward and start
+// @Description ""
+// @Tags network
+// @Accept  json
+// @Produce  json
+// @Param id path string true "id"
+// @Success 200 {object} resp.DataResp{}
+// @Router /v1/forward/{id}/stop [post]
+func StopForward(c *gin.Context) {
+	var err error
+	idStr := c.Param("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		logger.Error(err)
+		c.JSON(resp.UnexpectedError(err))
+		return
+	}
+	err = forward.Stop(c, id)
 	if err != nil {
 		c.JSON(resp.UnexpectedError(err))
 		return

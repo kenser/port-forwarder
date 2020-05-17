@@ -2,6 +2,7 @@ package forwardermanager
 
 import (
 	"context"
+	"fmt"
 	"github.com/cloverzrg/go-portforward/dns"
 	"github.com/cloverzrg/go-portforward/logger"
 	"github.com/cloverzrg/go-portforward/model/forwarddao"
@@ -25,14 +26,12 @@ func CloseById(ctx context.Context, id int) (err error) {
 		if err != nil {
 			return
 		}
+		delete(ForwardingMap, id)
+		return
+	} else {
+		return fmt.Errorf("the forward is not running")
 	}
-	forwarder := ForwardingMap[id]
-	err = forwarder.Close()
-	if err != nil {
-		return err
-	}
-	delete(ForwardingMap, id)
-	return err
+	//return err
 }
 
 func StartById(ctx context.Context, id int) (err error) {
@@ -64,6 +63,5 @@ func StartById(ctx context.Context, id int) (err error) {
 		return err
 	}
 	ForwardingMap[data.Id] = newForwarder
-	data.Status = 1
 	return err
 }
