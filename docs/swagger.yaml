@@ -12,41 +12,6 @@ definitions:
       target_port:
         type: integer
     type: object
-  dto.ForwardDetail:
-    properties:
-      id:
-        type: integer
-      listen_address:
-        type: string
-      listen_port:
-        type: integer
-      network:
-        type: string
-      status:
-        type: integer
-      target_address:
-        type: string
-      target_port:
-        type: integer
-    type: object
-  dto.ForwardList:
-    properties:
-      list:
-        items:
-          $ref: '#/definitions/dto.ForwardDetail'
-        type: array
-      total:
-        type: integer
-    type: object
-  dto.NetworkInterface:
-    properties:
-      address:
-        type: string
-      default_gateway:
-        type: boolean
-      desc:
-        type: string
-    type: object
   resp.DataResp:
     properties:
       code:
@@ -90,12 +55,7 @@ paths:
         "200":
           description: OK
           schema:
-            allOf:
-            - $ref: '#/definitions/resp.DataResp'
-            - properties:
-                data:
-                  $ref: '#/definitions/dto.ForwardList'
-              type: object
+            $ref: '#/definitions/resp.DataResp'
       summary: get forward list
       tags:
       - froward
@@ -137,12 +97,7 @@ paths:
         "200":
           description: OK
           schema:
-            allOf:
-            - $ref: '#/definitions/resp.DataResp'
-            - properties:
-                data:
-                  $ref: '#/definitions/dto.ForwardDetail'
-              type: object
+            $ref: '#/definitions/resp.DataResp'
       summary: get froward detail by id
       tags:
       - froward
@@ -218,14 +173,7 @@ paths:
         "200":
           description: OK
           schema:
-            allOf:
-            - $ref: '#/definitions/resp.DataResp'
-            - properties:
-                data:
-                  items:
-                    $ref: '#/definitions/dto.NetworkInterface'
-                  type: array
-              type: object
+            $ref: '#/definitions/resp.DataResp'
       summary: get network interface list
       tags:
       - network

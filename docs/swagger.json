@@ -50,19 +50,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/resp.DataResp"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/dto.ForwardList"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/resp.DataResp"
                         }
                     }
                 }
@@ -126,19 +114,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/resp.DataResp"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/dto.ForwardDetail"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/resp.DataResp"
                         }
                     }
                 }
@@ -254,22 +230,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/resp.DataResp"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/dto.NetworkInterface"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/resp.DataResp"
                         }
                     }
                 }
@@ -294,60 +255,6 @@
                 },
                 "target_port": {
                     "type": "integer"
-                }
-            }
-        },
-        "dto.ForwardDetail": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "listen_address": {
-                    "type": "string"
-                },
-                "listen_port": {
-                    "type": "integer"
-                },
-                "network": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "integer"
-                },
-                "target_address": {
-                    "type": "string"
-                },
-                "target_port": {
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.ForwardList": {
-            "type": "object",
-            "properties": {
-                "list": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/dto.ForwardDetail"
-                    }
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.NetworkInterface": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "default_gateway": {
-                    "type": "boolean"
-                },
-                "desc": {
-                    "type": "string"
                 }
             }
         },
