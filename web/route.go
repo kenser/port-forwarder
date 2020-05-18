@@ -28,5 +28,5 @@ func setupDefaultRoute(r *gin.RouterGroup) {
 	r.POST("/forward/:id/delete", controller.DeleteForward)
 
 	// restart all forward
-	r.POST("/forward-manager/restart", controller.AddForward)
+	r.POST("/forward-manager/restart")
 }
