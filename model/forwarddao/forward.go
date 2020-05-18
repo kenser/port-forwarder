@@ -37,19 +37,19 @@ func Add(network string, listenAddress string, listenPort int, targetAddress str
 }
 
 func GetById(id int) (data Forward, err error) {
-	err = db.DB.Table("forwards").Where("id = ?", id).First(&data).Error
+	err = db.DB.Model(&Forward{}).Where("id = ?", id).First(&data).Error
 	return data, err
 }
 
 func UpdateById(id int, data Forward) (err error) {
-	return db.DB.Table("forwards").Where("id = ?", id).Update(data).Error
+	return db.DB.Model(&Forward{}).Where("id = ?", id).Update(data).Error
 }
 
 func UpdateByIdMap(id int, m map[string]interface{}) (err error) {
-	return db.DB.Table("forwards").Where("id = ?", id).Update(m).Error
+	return db.DB.Model(&Forward{}).Where("id = ?", id).Update(m).Error
 }
 
 
 func DeleteById(id int) (err error) {
-	return db.DB.Table("forwards").Where("id = ?", id).Delete(&Forward{}).Error
+	return db.DB.Where("id = ?", id).Delete(&Forward{}).Error
 }
