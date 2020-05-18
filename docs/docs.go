@@ -32,6 +32,59 @@ var doc = `{
     "basePath": "{{.BasePath}}",
     "paths": {
         "/v1/forward/": {
+            "get": {
+                "description": "\"\"",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "network"
+                ],
+                "summary": "get forward list",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "页码，默认1",
+                        "name": "page_num",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "页面大小，默认20",
+                        "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "status",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/resp.DataResp"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dto.ForwardList"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
             "post": {
                 "description": "\"\"",
                 "consumes": [
@@ -60,6 +113,50 @@ var doc = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/resp.DataResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/forward/{id}": {
+            "get": {
+                "description": "\"\"",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "network"
+                ],
+                "summary": "get froward detail by id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/resp.DataResp"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dto.ForwardDetail"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -201,19 +298,56 @@ var doc = `{
         "dto.AddForward": {
             "type": "object",
             "properties": {
-                "listenAddress": {
+                "listen_address": {
                     "type": "string"
                 },
-                "listenPort": {
+                "listen_port": {
                     "type": "integer"
                 },
                 "network": {
                     "type": "string"
                 },
-                "targetAddress": {
+                "target_address": {
                     "type": "string"
                 },
-                "targetPort": {
+                "target_port": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.ForwardDetail": {
+            "type": "object",
+            "properties": {
+                "listen_address": {
+                    "type": "string"
+                },
+                "listen_port": {
+                    "type": "integer"
+                },
+                "network": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "target_address": {
+                    "type": "string"
+                },
+                "target_port": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.ForwardList": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.ForwardDetail"
+                    }
+                },
+                "total": {
                     "type": "integer"
                 }
             }

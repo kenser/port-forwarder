@@ -1,15 +1,39 @@
 definitions:
   dto.AddForward:
     properties:
-      listenAddress:
+      listen_address:
         type: string
-      listenPort:
+      listen_port:
         type: integer
       network:
         type: string
-      targetAddress:
+      target_address:
         type: string
-      targetPort:
+      target_port:
+        type: integer
+    type: object
+  dto.ForwardDetail:
+    properties:
+      listen_address:
+        type: string
+      listen_port:
+        type: integer
+      network:
+        type: string
+      status:
+        type: integer
+      target_address:
+        type: string
+      target_port:
+        type: integer
+    type: object
+  dto.ForwardList:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/dto.ForwardDetail'
+        type: array
+      total:
         type: integer
     type: object
   dto.NetworkInterface:
@@ -41,6 +65,38 @@ info:
   version: "1.0"
 paths:
   /v1/forward/:
+    get:
+      consumes:
+      - application/json
+      description: '""'
+      parameters:
+      - description: 页码，默认1
+        in: query
+        name: page_num
+        type: string
+      - description: 页面大小，默认20
+        in: query
+        name: page_size
+        type: string
+      - description: status
+        in: query
+        name: status
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/resp.DataResp'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.ForwardList'
+              type: object
+      summary: get forward list
+      tags:
+      - network
     post:
       consumes:
       - application/json
@@ -60,6 +116,32 @@ paths:
           schema:
             $ref: '#/definitions/resp.DataResp'
       summary: add a forward and start it
+      tags:
+      - network
+  /v1/forward/{id}:
+    get:
+      consumes:
+      - application/json
+      description: '""'
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/resp.DataResp'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.ForwardDetail'
+              type: object
+      summary: get froward detail by id
       tags:
       - network
   /v1/forward/{id}/delete:

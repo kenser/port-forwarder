@@ -17,13 +17,13 @@ func setupDefaultRoute(r *gin.RouterGroup) {
 	// add a forward and start it
 	r.POST("/forward/", controller.AddForward)
 	// get forward list
-	r.GET("/forward/", controller.AddForward)
+	r.GET("/forward/", controller.GetForwardList)
 	// stop forward by id
 	r.POST("/forward/:id/stop", controller.StopForward)
 	// start forward by id
 	r.POST("/forward/:id/start", controller.StartForward)
 	// get froward detail by id
-	r.GET("/forward/:id")
+	r.GET("/forward/:id", controller.GetForwardById)
 	// delete forward by id
 	r.POST("/forward/:id/delete", controller.DeleteForward)
 

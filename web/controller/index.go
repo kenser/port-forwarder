@@ -78,6 +78,58 @@ func AddForward(c *gin.Context) {
 	c.JSON(resp.Data(id))
 }
 
+// @Summary get forward list
+// @Description ""
+// @Tags network
+// @Accept  json
+// @Produce  json
+// @Param page_num query string false "页码，默认1"
+// @Param page_size query string false "页面大小，默认20"
+// @Param status query int false "status"
+// @Success 200 {object} resp.DataResp{data=dto.ForwardList}
+// @Router /v1/forward/ [get]
+func GetForwardList(c *gin.Context) {
+	var req dto.PortForwardFilters
+	var err error
+	err = c.Bind(&req)
+	if err != nil {
+		logger.Error(err)
+		c.JSON(resp.UnexpectedError(err))
+		return
+	}
+	res, err := forward.Find(c, req)
+	if err != nil {
+		c.JSON(resp.UnexpectedError(err))
+		return
+	}
+	c.JSON(resp.Data(res))
+}
+
+// @Summary get froward detail by id
+// @Description ""
+// @Tags network
+// @Accept  json
+// @Produce  json
+// @Param id path string true "id"
+// @Success 200 {object} resp.DataResp{data=dto.ForwardDetail}
+// @Router /v1/forward/{id} [get]
+func GetForwardById(c *gin.Context) {
+	var err error
+	idStr := c.Param("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		logger.Error(err)
+		c.JSON(resp.UnexpectedError(err))
+		return
+	}
+	data, err := forward.GetDetailById(c, id)
+	if err != nil {
+		c.JSON(resp.UnexpectedError(err))
+		return
+	}
+	c.JSON(resp.Data(data))
+}
+
 // @Summary stop forward by id
 // @Description ""
 // @Tags network

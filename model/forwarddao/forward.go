@@ -2,6 +2,7 @@ package forwarddao
 
 import (
 	"github.com/cloverzrg/go-portforward/db"
+	"github.com/cloverzrg/go-portforward/web/dto"
 	"time"
 )
 
@@ -41,6 +42,19 @@ func GetById(id int) (data Forward, err error) {
 	return data, err
 }
 
+func FindByFilters(filters dto.PortForwardFilters) (list []Forward, total int, err error) {
+	tx := db.DB.Model(&Forward{})
+	if filters.Status != nil {
+		tx.Where("status = ?", filters.Status)
+	}
+	err = tx.Count(&total).Error
+	if err != nil {
+		return list, total, err
+	}
+	err = tx.Offset((filters.PageNum - 1) * filters.PageSize).Limit(filters.PageSize).Find(&list).Error
+	return list, total, err
+}
+
 func UpdateById(id int, data Forward) (err error) {
 	return db.DB.Model(&Forward{}).Where("id = ?", id).Update(data).Error
 }
@@ -48,7 +62,6 @@ func UpdateById(id int, data Forward) (err error) {
 func UpdateByIdMap(id int, m map[string]interface{}) (err error) {
 	return db.DB.Model(&Forward{}).Where("id = ?", id).Update(m).Error
 }
-
 
 func DeleteById(id int) (err error) {
 	return db.DB.Where("id = ?", id).Delete(&Forward{}).Error

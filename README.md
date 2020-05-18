@@ -6,4 +6,5 @@ not released
 - multiple users
 - port & interface permission control
 - flow analysis
-- support multi interface
+- support multi network interface
+- rate limit

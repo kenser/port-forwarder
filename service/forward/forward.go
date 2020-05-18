@@ -70,6 +70,9 @@ func Delete(ctx context.Context, id int) (err error) {
 		}
 	}()
 	err = forwardermanager.CloseById(ctx, id)
+	if err == forwardermanager.ErrNotRunning {
+		err = nil
+	}
 	if err != nil {
 		return err
 	}
@@ -80,6 +83,43 @@ func Delete(ctx context.Context, id int) (err error) {
 	return err
 }
 
-func Find(ctx context.Context, filters string) (err error) {
-	return err
+func Find(ctx context.Context, filters dto.PortForwardFilters) (res dto.ForwardList, err error) {
+	list, total, err := forwarddao.FindByFilters(filters)
+	var resList []dto.ForwardDetail
+	for _, v := range list {
+		resList = append(resList, dto.ForwardDetail{
+			Status:        v.Status,
+			Network:       v.Network,
+			ListenAddress: v.ListenAddress,
+			ListenPort:    v.ListenPort,
+			TargetAddress: v.TargetAddress,
+			TargetPort:    v.TargetPort,
+		})
+	}
+	res = dto.ForwardList{
+		Total: total,
+		List:  resList,
+	}
+	return res, err
+}
+
+func GetDetailById(ctx context.Context, id int) (res dto.ForwardDetail, err error) {
+	defer func() {
+		if err != nil {
+			logger.Error(err)
+		}
+	}()
+	data, err := forwarddao.GetById(id)
+	if err != nil {
+		return res, err
+	}
+	res = dto.ForwardDetail{
+		Status:        data.Status,
+		Network:       data.Network,
+		ListenAddress: data.ListenAddress,
+		ListenPort:    data.ListenPort,
+		TargetAddress: data.TargetAddress,
+		TargetPort:    data.TargetPort,
+	}
+	return res, err
 }
