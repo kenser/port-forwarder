@@ -48,3 +48,8 @@ func UpdateById(id int, data Forward) (err error) {
 func UpdateByIdMap(id int, m map[string]interface{}) (err error) {
 	return db.DB.Table("forwards").Where("id = ?", id).Update(m).Error
 }
+
+
+func DeleteById(id int) (err error) {
+	return db.DB.Table("forwards").Where("id = ?", id).Delete(&Forward{}).Error
+}

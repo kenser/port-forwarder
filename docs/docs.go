@@ -43,7 +43,7 @@ var doc = `{
                 "tags": [
                     "network"
                 ],
-                "summary": "add a forward and start",
+                "summary": "add a forward and start it",
                 "parameters": [
                     {
                         "description": "请求json",
@@ -53,6 +53,70 @@ var doc = `{
                         "schema": {
                             "$ref": "#/definitions/dto.AddForward"
                         }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/resp.DataResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/forward/{id}/delete": {
+            "post": {
+                "description": "\"\"",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "network"
+                ],
+                "summary": "delete forward by id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/resp.DataResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/forward/{id}/start": {
+            "post": {
+                "description": "\"\"",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "network"
+                ],
+                "summary": "start forward by id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -77,7 +141,7 @@ var doc = `{
                 "tags": [
                     "network"
                 ],
-                "summary": "add a forward and start",
+                "summary": "stop forward by id",
                 "parameters": [
                     {
                         "type": "string",

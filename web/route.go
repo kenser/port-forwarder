@@ -14,9 +14,19 @@ func SetupRoute(r *gin.Engine) {
 func setupDefaultRoute(r *gin.RouterGroup) {
 	r.GET("/network/interfaces", controller.GetNetworkInterfaces)
 
+	// add a forward and start it
 	r.POST("/forward/", controller.AddForward)
+	// get forward list
+	r.GET("/forward/", controller.AddForward)
+	// stop forward by id
 	r.POST("/forward/:id/stop", controller.StopForward)
-	r.POST("/forward/:id/start")
+	// start forward by id
+	r.POST("/forward/:id/start", controller.StartForward)
+	// get froward detail by id
 	r.GET("/forward/:id")
-	r.DELETE("/forward/:id")
+	// delete forward by id
+	r.POST("/forward/:id/delete", controller.DeleteForward)
+
+	// restart all forward
+	r.POST("/forward-manager/restart", controller.AddForward)
 }

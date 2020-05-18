@@ -45,9 +45,12 @@ func StartById(ctx context.Context, id int) (err error) {
 		return err
 	}
 	if ForwardingMap[data.Id] != nil {
+		if ForwardingMap[data.Id].IsClosed != true {
+			return fmt.Errorf("the forward is already running")
+		}
 		err = ForwardingMap[data.Id].Close()
 		if err != nil {
-			return
+			return err
 		}
 	}
 	targetIp, err := dns.LookupIP(data.TargetAddress)

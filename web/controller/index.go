@@ -53,7 +53,7 @@ func GetNetworkInterfaces(c *gin.Context) {
 	c.JSON(resp.Data(list))
 }
 
-// @Summary add a forward and start
+// @Summary add a forward and start it
 // @Description ""
 // @Tags network
 // @Accept  json
@@ -70,15 +70,15 @@ func AddForward(c *gin.Context) {
 		c.JSON(resp.UnexpectedError(err))
 		return
 	}
-	err = forward.Add(c, req)
+	id, err := forward.Add(c, req)
 	if err != nil {
 		c.JSON(resp.UnexpectedError(err))
 		return
 	}
-	c.JSON(resp.Data("ok"))
+	c.JSON(resp.Data(id))
 }
 
-// @Summary add a forward and start
+// @Summary stop forward by id
 // @Description ""
 // @Tags network
 // @Accept  json
@@ -96,6 +96,57 @@ func StopForward(c *gin.Context) {
 		return
 	}
 	err = forward.Stop(c, id)
+	if err != nil {
+		c.JSON(resp.UnexpectedError(err))
+		return
+	}
+	c.JSON(resp.Data("ok"))
+}
+
+
+// @Summary start forward by id
+// @Description ""
+// @Tags network
+// @Accept  json
+// @Produce  json
+// @Param id path string true "id"
+// @Success 200 {object} resp.DataResp{}
+// @Router /v1/forward/{id}/start [post]
+func StartForward(c *gin.Context) {
+	var err error
+	idStr := c.Param("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		logger.Error(err)
+		c.JSON(resp.UnexpectedError(err))
+		return
+	}
+	err = forward.Start(c, id)
+	if err != nil {
+		c.JSON(resp.UnexpectedError(err))
+		return
+	}
+	c.JSON(resp.Data("ok"))
+}
+
+// @Summary delete forward by id
+// @Description ""
+// @Tags network
+// @Accept  json
+// @Produce  json
+// @Param id path string true "id"
+// @Success 200 {object} resp.DataResp{}
+// @Router /v1/forward/{id}/delete [post]
+func DeleteForward(c *gin.Context) {
+	var err error
+	idStr := c.Param("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		logger.Error(err)
+		c.JSON(resp.UnexpectedError(err))
+		return
+	}
+	err = forward.Delete(c, id)
 	if err != nil {
 		c.JSON(resp.UnexpectedError(err))
 		return

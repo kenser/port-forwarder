@@ -59,7 +59,49 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/resp.DataResp'
-      summary: add a forward and start
+      summary: add a forward and start it
+      tags:
+      - network
+  /v1/forward/{id}/delete:
+    post:
+      consumes:
+      - application/json
+      description: '""'
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/resp.DataResp'
+      summary: delete forward by id
+      tags:
+      - network
+  /v1/forward/{id}/start:
+    post:
+      consumes:
+      - application/json
+      description: '""'
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/resp.DataResp'
+      summary: start forward by id
       tags:
       - network
   /v1/forward/{id}/stop:
@@ -80,7 +122,7 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/resp.DataResp'
-      summary: add a forward and start
+      summary: stop forward by id
       tags:
       - network
   /v1/network/interfaces:
