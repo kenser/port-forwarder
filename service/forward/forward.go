@@ -88,6 +88,7 @@ func Find(ctx context.Context, filters dto.PortForwardFilters) (res dto.ForwardL
 	var resList []dto.ForwardDetail
 	for _, v := range list {
 		resList = append(resList, dto.ForwardDetail{
+			Id:            v.Id,
 			Status:        v.Status,
 			Network:       v.Network,
 			ListenAddress: v.ListenAddress,
@@ -114,6 +115,7 @@ func GetDetailById(ctx context.Context, id int) (res dto.ForwardDetail, err erro
 		return res, err
 	}
 	res = dto.ForwardDetail{
+		Id:            data.Id,
 		Status:        data.Status,
 		Network:       data.Network,
 		ListenAddress: data.ListenAddress,

@@ -47,6 +47,19 @@ func GetNetworkInterfaces(c *gin.Context) {
 						})
 					}
 				}
+				if !vv.IP.IsLoopback() {
+					if vv.IP.To16() != nil {
+						isDefaultGateway := false
+						if defaultGateway == vv.IP.String() {
+							isDefaultGateway = true
+						}
+						list = append(list, dto.NetworkInterface{
+							Address:        vv.IP.String(),
+							Desc:           v.Name,
+							DefaultGateway: isDefaultGateway,
+						})
+					}
+				}
 			}
 		}
 	}
@@ -55,7 +68,7 @@ func GetNetworkInterfaces(c *gin.Context) {
 
 // @Summary add a forward and start it
 // @Description ""
-// @Tags network
+// @Tags froward
 // @Accept  json
 // @Produce  json
 // @Param json body dto.AddForward true "请求json"
@@ -80,7 +93,7 @@ func AddForward(c *gin.Context) {
 
 // @Summary get forward list
 // @Description ""
-// @Tags network
+// @Tags froward
 // @Accept  json
 // @Produce  json
 // @Param page_num query string false "页码，默认1"
@@ -107,7 +120,7 @@ func GetForwardList(c *gin.Context) {
 
 // @Summary get froward detail by id
 // @Description ""
-// @Tags network
+// @Tags froward
 // @Accept  json
 // @Produce  json
 // @Param id path string true "id"
@@ -132,7 +145,7 @@ func GetForwardById(c *gin.Context) {
 
 // @Summary stop forward by id
 // @Description ""
-// @Tags network
+// @Tags froward
 // @Accept  json
 // @Produce  json
 // @Param id path string true "id"
@@ -158,7 +171,7 @@ func StopForward(c *gin.Context) {
 
 // @Summary start forward by id
 // @Description ""
-// @Tags network
+// @Tags froward
 // @Accept  json
 // @Produce  json
 // @Param id path string true "id"
@@ -183,7 +196,7 @@ func StartForward(c *gin.Context) {
 
 // @Summary delete forward by id
 // @Description ""
-// @Tags network
+// @Tags froward
 // @Accept  json
 // @Produce  json
 // @Param id path string true "id"

@@ -9,7 +9,8 @@ type AddForward struct {
 }
 
 type ForwardDetail struct {
-	Status int `json:"status"`
+	Id            int    `json:"id"`
+	Status        int    `json:"status"`
 	Network       string `json:"network"`
 	ListenAddress string `json:"listen_address"`
 	ListenPort    int    `json:"listen_port"`
@@ -23,7 +24,7 @@ type ForwardList struct {
 }
 
 type PortForwardFilters struct {
-	PageNum        uint       `form:"page_num,default=1" binding:"gte=0"`
-	PageSize       uint       `form:"page_size,default=20" binding:"gte=0,lte=300"`
-	Status         *int       `form:"status"`
+	PageNum  uint `form:"page_num,default=1" binding:"gte=0"`
+	PageSize uint `form:"page_size,default=20" binding:"gte=0,lte=300"`
+	Status   *int `form:"status"`
 }

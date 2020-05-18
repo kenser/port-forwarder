@@ -41,7 +41,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "network"
+                    "froward"
                 ],
                 "summary": "get forward list",
                 "parameters": [
@@ -94,7 +94,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "network"
+                    "froward"
                 ],
                 "summary": "add a forward and start it",
                 "parameters": [
@@ -128,7 +128,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "network"
+                    "froward"
                 ],
                 "summary": "get froward detail by id",
                 "parameters": [
@@ -172,7 +172,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "network"
+                    "froward"
                 ],
                 "summary": "delete forward by id",
                 "parameters": [
@@ -204,7 +204,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "network"
+                    "froward"
                 ],
                 "summary": "start forward by id",
                 "parameters": [
@@ -236,7 +236,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "network"
+                    "froward"
                 ],
                 "summary": "stop forward by id",
                 "parameters": [

@@ -96,7 +96,7 @@ paths:
               type: object
       summary: get forward list
       tags:
-      - network
+      - froward
     post:
       consumes:
       - application/json
@@ -117,7 +117,7 @@ paths:
             $ref: '#/definitions/resp.DataResp'
       summary: add a forward and start it
       tags:
-      - network
+      - froward
   /v1/forward/{id}:
     get:
       consumes:
@@ -143,7 +143,7 @@ paths:
               type: object
       summary: get froward detail by id
       tags:
-      - network
+      - froward
   /v1/forward/{id}/delete:
     post:
       consumes:
@@ -164,7 +164,7 @@ paths:
             $ref: '#/definitions/resp.DataResp'
       summary: delete forward by id
       tags:
-      - network
+      - froward
   /v1/forward/{id}/start:
     post:
       consumes:
@@ -185,7 +185,7 @@ paths:
             $ref: '#/definitions/resp.DataResp'
       summary: start forward by id
       tags:
-      - network
+      - froward
   /v1/forward/{id}/stop:
     post:
       consumes:
@@ -206,7 +206,7 @@ paths:
             $ref: '#/definitions/resp.DataResp'
       summary: stop forward by id
       tags:
-      - network
+      - froward
   /v1/network/interfaces:
     get:
       description: '""'
