@@ -221,7 +221,11 @@ func (pf *PortForwarder) copyIO(src, dest net.Conn, connType int, c chan struct{
 	}()
 	//var n int64
 	//start := time.Now()
-	_, _ = io.Copy(src, dest)
+	_, err := io.Copy(src, dest)
+	if err != nil {
+		logger.Error(err)
+		return
+	}
 	//end := time.Now()
 	//if connType == 1 {
 	//	logger.Infof("%s --> %s conn close, 发送 %d bytes, dur %+v\n", src.LocalAddr(), dest.RemoteAddr(), n, end.Sub(start))
