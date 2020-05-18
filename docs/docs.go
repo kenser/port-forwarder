@@ -318,6 +318,9 @@ var doc = `{
         "dto.ForwardDetail": {
             "type": "object",
             "properties": {
+                "id": {
+                    "type": "integer"
+                },
                 "listen_address": {
                     "type": "string"
                 },

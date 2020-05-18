@@ -14,6 +14,8 @@ definitions:
     type: object
   dto.ForwardDetail:
     properties:
+      id:
+        type: integer
       listen_address:
         type: string
       listen_port:
