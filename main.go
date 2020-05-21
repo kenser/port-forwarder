@@ -35,7 +35,7 @@ func main() {
 func init() {
 	var err error
 	fmt.Printf("BuildTime: %s\nGoVersion: %s\nGitHead: %s\n", BuildTime, GoVersion, GitHead)
-	config.Parse("./config.json")
+	config.Parse("./data/config.json")
 	err = db.Connect()
 	if err != nil {
 		logger.Panic(err)
