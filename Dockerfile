@@ -9,5 +9,6 @@ RUN apk update && apk add --no-cache ca-certificates tzdata
 COPY --from=builder /go/src/go-portforwarder /app/
 ENV ENV prod
 EXPOSE 80
+RUN mkdir /app/data
 VOLUME /app/data
 CMD ["/app/go-portforwarder"]

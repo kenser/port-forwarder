@@ -18,11 +18,12 @@ type config struct {
 
 var Config config
 
-func Parse(path string) {
-	err := parse(&Config, path)
+func Parse(path string) (err error){
+	err = parse(&Config, path)
 	if err != nil {
-		logger.Error(err)
+		return err
 	}
+	return err
 }
 
 func parse(config interface{}, path string) (err error) {
