@@ -9,14 +9,14 @@ import (
 	"github.com/cloverzrg/go-portforward/web"
 )
 
-// @title go-portforward
+// @title go-portforwarder
 // @version 1.0
 
 // @contact.name API Support
-// @contact.url https://github.com/cloverzrg/go-portforward
+// @contact.url https://github.com/cloverzrg/go-portforwarder
 // @contact.email cloverzrg@gmail.com
 
-// @license.name go-portforward
+// @license.name go-portforwarder
 
 var (
 	BuildTime string
