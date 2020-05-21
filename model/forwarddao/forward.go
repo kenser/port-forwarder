@@ -55,6 +55,11 @@ func FindByFilters(filters dto.PortForwardFilters) (list []Forward, total int, e
 	return list, total, err
 }
 
+func FindAllRunning() (list []Forward, err error) {
+	err = db.DB.Model(&Forward{}).Where("status = ?", 1).Find(&list).Error
+	return list, err
+}
+
 func UpdateById(id int, data Forward) (err error) {
 	return db.DB.Model(&Forward{}).Where("id = ?", id).Update(data).Error
 }

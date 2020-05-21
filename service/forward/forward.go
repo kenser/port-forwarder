@@ -125,3 +125,23 @@ func GetDetailById(ctx context.Context, id int) (res dto.ForwardDetail, err erro
 	}
 	return res, err
 }
+
+func StartUp() (err error) {
+	defer func() {
+		if err != nil {
+			logger.Error(err)
+		}
+	}()
+	list, err := forwarddao.FindAllRunning()
+	if err != nil {
+		return err
+	}
+	ctx := context.Background()
+	for _, v := range list {
+		err = Start(ctx, v.Id)
+		if err != nil {
+			return err
+		}
+	}
+	return err
+}

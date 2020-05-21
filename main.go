@@ -6,6 +6,7 @@ import (
 	"github.com/cloverzrg/go-portforward/db"
 	"github.com/cloverzrg/go-portforward/logger"
 	"github.com/cloverzrg/go-portforward/model"
+	"github.com/cloverzrg/go-portforward/service/forward"
 	"github.com/cloverzrg/go-portforward/web"
 )
 
@@ -46,5 +47,9 @@ func init() {
 	err = model.CreateAllTable()
 	if err != nil {
 		logger.Panic(err)
+	}
+	err = forward.StartUp()
+	if err != nil {
+		logger.Error(err)
 	}
 }
