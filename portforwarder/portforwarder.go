@@ -3,7 +3,6 @@ package portforwarder
 import (
 	"fmt"
 	"github.com/cloverzrg/go-portforward/logger"
-	"github.com/cloverzrg/go-portforward/ratelimit"
 	"io"
 	"math"
 	"net"
@@ -223,28 +222,28 @@ func (pf *PortForwarder) handleRequest(conn net.Conn, id uint) {
 }
 
 func (pf *PortForwarder) copyIO(src, dest net.Conn, connType int, c chan struct{}) {
-	bucket := ratelimit.NewBucketWithRate(100*1024, 100*1024)
-	newReader := ratelimit.Reader(dest, bucket)
-	defer func() {
-		c <- struct{}{}
-	}()
+	//bucket := ratelimit.NewBucketWithRate(100*1024, 100*1024)
+	//newReader := ratelimit.Reader(dest, bucket)
+	//defer func() {
+	//	c <- struct{}{}
+	//}()
 	//var n int64
 	//start := time.Now()
+	//
+	//go func() {
+	//	for {
+	//		select {
+	//		case <-c:
+	//			return
+	//		default:
+	//			time.Sleep(1 * time.Second)
+	//			logger.Infof("bucket:rate:%f, available:%d", bucket.Rate())
+	//		}
+	//
+	//	}
+	//}()
 
-	go func() {
-		for {
-			select {
-			case <-c:
-				return
-			default:
-				time.Sleep(1 * time.Second)
-				logger.Infof("bucket:rate:%f, available:%d", bucket.Rate())
-			}
-
-		}
-	}()
-
-	_, err := io.Copy(src, newReader)
+	_, err := io.Copy(src, dest)
 	if err != nil {
 		logger.Error(err)
 		return
