@@ -3,6 +3,7 @@ package portforwarder
 import (
 	"fmt"
 	"github.com/cloverzrg/go-portforward/logger"
+	"github.com/cloverzrg/go-portforward/ratelimit"
 	"io"
 	"math"
 	"net"
@@ -175,6 +176,10 @@ func (pf *PortForwarder) DelConn(id uint) {
 
 func (pf *PortForwarder) handleRequest(conn net.Conn, id uint) {
 	pf.AddConn(id, conn)
+	c1 := make(chan struct{})
+	c2 := make(chan struct{})
+	//defer close(c1)
+	//defer close(c2)
 	defer func() {
 		var err error
 		if !pf.IsClosed {
@@ -204,24 +209,42 @@ func (pf *PortForwarder) handleRequest(conn net.Conn, id uint) {
 	}()
 
 	logger.Infof("new connection(%d):%v-->%v-->%v", id, conn.RemoteAddr(), conn.LocalAddr(), target)
-	c1 := make(chan struct{})
-	c2 := make(chan struct{})
+
+
 	go pf.copyIO(conn, proxy, 1, c1)
 	go pf.copyIO(proxy, conn, 2, c2)
 
 	select {
 	case <-c1:
+		close(c1)
 	case <-c2:
+		close(c2)
 	}
 }
 
 func (pf *PortForwarder) copyIO(src, dest net.Conn, connType int, c chan struct{}) {
+	bucket := ratelimit.NewBucketWithRate(100*1024, 100*1024)
+	newReader := ratelimit.Reader(dest, bucket)
 	defer func() {
 		c <- struct{}{}
 	}()
 	//var n int64
 	//start := time.Now()
-	_, err := io.Copy(src, dest)
+
+	go func() {
+		for {
+			select {
+			case <-c:
+				return
+			default:
+				time.Sleep(1 * time.Second)
+				logger.Infof("bucket:rate:%f, available:%d", bucket.Rate())
+			}
+
+		}
+	}()
+
+	_, err := io.Copy(src, newReader)
 	if err != nil {
 		logger.Error(err)
 		return
