@@ -2,10 +2,10 @@ package forward
 
 import (
 	"context"
-	"github.com/cloverzrg/go-portforward/logger"
-	"github.com/cloverzrg/go-portforward/model/forwarddao"
-	"github.com/cloverzrg/go-portforward/service/forwardermanager"
-	"github.com/cloverzrg/go-portforward/web/dto"
+	"github.com/cloverzrg/go-portforwarder/logger"
+	"github.com/cloverzrg/go-portforwarder/model/forwarddao"
+	"github.com/cloverzrg/go-portforwarder/service/forwardermanager"
+	"github.com/cloverzrg/go-portforwarder/web/dto"
 )
 
 func Add(ctx context.Context, req dto.AddForward) (id int, err error) {

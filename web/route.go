@@ -1,8 +1,8 @@
 package web
 
 import (
-	_ "github.com/cloverzrg/go-portforward/docs"
-	"github.com/cloverzrg/go-portforward/web/controller"
+	_ "github.com/cloverzrg/go-portforwarder/docs"
+	"github.com/cloverzrg/go-portforwarder/web/controller"
 	"github.com/gin-gonic/gin"
 )
 

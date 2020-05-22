@@ -2,7 +2,7 @@ package config
 
 import (
 	"encoding/json"
-	"github.com/cloverzrg/go-portforward/logger"
+	"github.com/cloverzrg/go-portforwarder/logger"
 	"io/ioutil"
 	"os"
 	"reflect"

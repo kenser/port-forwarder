@@ -1,4 +1,4 @@
-module github.com/cloverzrg/go-portforward
+module github.com/cloverzrg/go-portforwarder
 
 go 1.14
 

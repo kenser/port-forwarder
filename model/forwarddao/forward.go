@@ -1,8 +1,8 @@
 package forwarddao
 
 import (
-	"github.com/cloverzrg/go-portforward/db"
-	"github.com/cloverzrg/go-portforward/web/dto"
+	"github.com/cloverzrg/go-portforwarder/db"
+	"github.com/cloverzrg/go-portforwarder/web/dto"
 	"time"
 )
 

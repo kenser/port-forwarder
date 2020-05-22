@@ -3,10 +3,10 @@ package forwardermanager
 import (
 	"context"
 	"errors"
-	"github.com/cloverzrg/go-portforward/dns"
-	"github.com/cloverzrg/go-portforward/logger"
-	"github.com/cloverzrg/go-portforward/model/forwarddao"
-	"github.com/cloverzrg/go-portforward/portforwarder"
+	"github.com/cloverzrg/go-portforwarder/dns"
+	"github.com/cloverzrg/go-portforwarder/logger"
+	"github.com/cloverzrg/go-portforwarder/model/forwarddao"
+	"github.com/cloverzrg/go-portforwarder/portforwarder"
 )
 
 var ForwardingMap map[int]*portforwarder.PortForwarder

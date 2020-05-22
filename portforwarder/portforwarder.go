@@ -2,7 +2,7 @@ package portforwarder
 
 import (
 	"fmt"
-	"github.com/cloverzrg/go-portforward/logger"
+	"github.com/cloverzrg/go-portforwarder/logger"
 	"io"
 	"math"
 	"net"

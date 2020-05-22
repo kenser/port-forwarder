@@ -2,12 +2,12 @@ package main
 
 import (
 	"fmt"
-	"github.com/cloverzrg/go-portforward/config"
-	"github.com/cloverzrg/go-portforward/db"
-	"github.com/cloverzrg/go-portforward/logger"
-	"github.com/cloverzrg/go-portforward/model"
-	"github.com/cloverzrg/go-portforward/service/forward"
-	"github.com/cloverzrg/go-portforward/web"
+	"github.com/cloverzrg/go-portforwarder/config"
+	"github.com/cloverzrg/go-portforwarder/db"
+	"github.com/cloverzrg/go-portforwarder/logger"
+	"github.com/cloverzrg/go-portforwarder/model"
+	"github.com/cloverzrg/go-portforwarder/service/forward"
+	"github.com/cloverzrg/go-portforwarder/web"
 )
 
 // @title go-portforwarder

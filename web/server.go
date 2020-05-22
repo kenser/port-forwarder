@@ -1,8 +1,8 @@
 package web
 
 import (
-	"github.com/cloverzrg/go-portforward/config"
-	"github.com/cloverzrg/go-portforward/constants"
+	"github.com/cloverzrg/go-portforwarder/config"
+	"github.com/cloverzrg/go-portforwarder/constants"
 	"github.com/gin-gonic/gin"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"

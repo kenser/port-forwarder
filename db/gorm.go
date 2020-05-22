@@ -1,7 +1,7 @@
 package db
 
 import (
-	"github.com/cloverzrg/go-portforward/logger"
+	"github.com/cloverzrg/go-portforwarder/logger"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )

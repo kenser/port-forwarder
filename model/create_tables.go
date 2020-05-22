@@ -1,8 +1,8 @@
 package model
 
 import (
-	"github.com/cloverzrg/go-portforward/db"
-	"github.com/cloverzrg/go-portforward/model/forwarddao"
+	"github.com/cloverzrg/go-portforwarder/db"
+	"github.com/cloverzrg/go-portforwarder/model/forwarddao"
 )
 
 func CreateAllTable() (err error) {

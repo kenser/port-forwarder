@@ -1,11 +1,11 @@
 package controller
 
 import (
-	"github.com/cloverzrg/go-portforward/logger"
-	"github.com/cloverzrg/go-portforward/service/forward"
-	"github.com/cloverzrg/go-portforward/utils"
-	"github.com/cloverzrg/go-portforward/web/dto"
-	"github.com/cloverzrg/go-portforward/web/resp"
+	"github.com/cloverzrg/go-portforwarder/logger"
+	"github.com/cloverzrg/go-portforwarder/service/forward"
+	"github.com/cloverzrg/go-portforwarder/utils"
+	"github.com/cloverzrg/go-portforwarder/web/dto"
+	"github.com/cloverzrg/go-portforwarder/web/resp"
 	"github.com/gin-gonic/gin"
 	"net"
 	"strconv"

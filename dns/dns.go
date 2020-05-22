@@ -3,7 +3,7 @@ package dns
 import (
 	"errors"
 	"fmt"
-	"github.com/cloverzrg/go-portforward/config"
+	"github.com/cloverzrg/go-portforwarder/config"
 	"github.com/miekg/dns"
 	"net"
 )
