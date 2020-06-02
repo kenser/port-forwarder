@@ -54,6 +54,8 @@ func Start(ctx context.Context, id int) (err error) {
 	}()
 	err = forwardermanager.StartById(ctx, id)
 	if err != nil {
+		logger.Error(err)
+		err = forwarddao.UpdateByIdMap(id, map[string]interface{}{"status": 0})
 		return err
 	}
 	err = forwarddao.UpdateByIdMap(id, map[string]interface{}{"status": 1})

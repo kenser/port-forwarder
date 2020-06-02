@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/cloverzrg/go-portforward/job"
 	"github.com/cloverzrg/go-portforwarder/config"
 	"github.com/cloverzrg/go-portforwarder/db"
 	"github.com/cloverzrg/go-portforwarder/logger"
@@ -26,6 +27,7 @@ var (
 )
 
 func main() {
+	job.Start()
 	var err error
 	err = web.Start()
 	if err != nil {
