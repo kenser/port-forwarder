@@ -23,12 +23,11 @@ definitions:
     type: object
 info:
   contact:
-    email: cloverzrg@gmail.com
     name: API Support
-    url: https://github.com/cloverzrg/go-portforward
+    url: https://github.com/cloverzrg/port-forwarder
   license:
-    name: go-portforward
-  title: go-portforward
+    name: port-forwarder
+  title: go-portforwarder
   version: "1.0"
 paths:
   /v1/forward/:

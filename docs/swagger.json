@@ -1,14 +1,13 @@
 {
     "swagger": "2.0",
     "info": {
-        "title": "go-portforward",
+        "title": "go-portforwarder",
         "contact": {
             "name": "API Support",
-            "url": "https://github.com/cloverzrg/go-portforward",
-            "email": "cloverzrg@gmail.com"
+            "url": "https://github.com/cloverzrg/port-forwarder"
         },
         "license": {
-            "name": "go-portforward"
+            "name": "port-forwarder"
         },
         "version": "1.0"
     },

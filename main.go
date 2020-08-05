@@ -15,10 +15,9 @@ import (
 // @version 1.0
 
 // @contact.name API Support
-// @contact.url https://github.com/cloverzrg/go-portforwarder
-// @contact.email cloverzrg@gmail.com
+// @contact.url https://github.com/cloverzrg/port-forwarder
 
-// @license.name go-portforwarder
+// @license.name port-forwarder
 
 var (
 	BuildTime string
