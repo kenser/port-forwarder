@@ -1,4 +1,4 @@
-# go-portforwarder
+# portforwarder
 not released
 
 ### feature
