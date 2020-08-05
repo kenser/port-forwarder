@@ -6,7 +6,6 @@ import (
 	"io"
 	"math"
 	"net"
-	"runtime"
 	"sync"
 	"time"
 )
@@ -106,7 +105,7 @@ func New(network, listenAddress string, listenPort int, targetAddress string, ta
 	if err != nil {
 		logger.Warn("target port is not available:", err)
 	}
-	runtime.SetFinalizer(pf, finalizer)
+	//runtime.SetFinalizer(pf, finalizer)
 	return pf, err
 }
 

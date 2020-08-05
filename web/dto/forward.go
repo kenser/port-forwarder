@@ -20,7 +20,8 @@ type ForwardDetail struct {
 
 type ForwardList struct {
 	Total int             `json:"total"`
-	List  []ForwardDetail `json:"list"`
+	List  []ForwardDetail `json:"data"`
+
 }
 
 type PortForwardFilters struct {

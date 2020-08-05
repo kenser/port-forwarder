@@ -16,7 +16,7 @@ import (
 // @Tags network
 // @Produce  json
 // @Success 200 {object} resp.DataResp{data=[]dto.NetworkInterface}
-// @Router /v1/network/interfaces [get]
+// @Router /network/interfaces [get]
 func GetNetworkInterfaces(c *gin.Context) {
 	defaultGateway := utils.GetLocalHostAddress()
 	list := []dto.NetworkInterface{
@@ -73,7 +73,7 @@ func GetNetworkInterfaces(c *gin.Context) {
 // @Produce  json
 // @Param json body dto.AddForward true "请求json"
 // @Success 200 {object} resp.DataResp{}
-// @Router /v1/forward/ [post]
+// @Router /forward/ [post]
 func AddForward(c *gin.Context) {
 	var req dto.AddForward
 	var err error
@@ -99,8 +99,8 @@ func AddForward(c *gin.Context) {
 // @Param page_num query string false "页码，默认1"
 // @Param page_size query string false "页面大小，默认20"
 // @Param status query int false "status"
-// @Success 200 {object} resp.DataResp{data=dto.ForwardList}
-// @Router /v1/forward/ [get]
+// @Success 200 {object} dto.ForwardList
+// @Router /forward/ [get]
 func GetForwardList(c *gin.Context) {
 	var req dto.PortForwardFilters
 	var err error
@@ -115,7 +115,8 @@ func GetForwardList(c *gin.Context) {
 		c.JSON(resp.UnexpectedError(err))
 		return
 	}
-	c.JSON(resp.Data(res))
+	c.JSON(200, res)
+	//c.JSON(resp.Data(res))
 }
 
 // @Summary get froward detail by id
@@ -125,7 +126,7 @@ func GetForwardList(c *gin.Context) {
 // @Produce  json
 // @Param id path string true "id"
 // @Success 200 {object} resp.DataResp{data=dto.ForwardDetail}
-// @Router /v1/forward/{id} [get]
+// @Router /forward/{id} [get]
 func GetForwardById(c *gin.Context) {
 	var err error
 	idStr := c.Param("id")
@@ -150,7 +151,7 @@ func GetForwardById(c *gin.Context) {
 // @Produce  json
 // @Param id path string true "id"
 // @Success 200 {object} resp.DataResp{}
-// @Router /v1/forward/{id}/stop [post]
+// @Router /forward/{id}/stop [post]
 func StopForward(c *gin.Context) {
 	var err error
 	idStr := c.Param("id")
@@ -176,7 +177,7 @@ func StopForward(c *gin.Context) {
 // @Produce  json
 // @Param id path string true "id"
 // @Success 200 {object} resp.DataResp{}
-// @Router /v1/forward/{id}/start [post]
+// @Router /forward/{id}/start [post]
 func StartForward(c *gin.Context) {
 	var err error
 	idStr := c.Param("id")
@@ -201,7 +202,7 @@ func StartForward(c *gin.Context) {
 // @Produce  json
 // @Param id path string true "id"
 // @Success 200 {object} resp.DataResp{}
-// @Router /v1/forward/{id}/delete [post]
+// @Router /forward/{id}/delete [post]
 func DeleteForward(c *gin.Context) {
 	var err error
 	idStr := c.Param("id")

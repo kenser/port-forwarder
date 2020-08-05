@@ -7,7 +7,7 @@ import (
 )
 
 func SetupRoute(r *gin.Engine) {
-	g := r.Group("/v1")
+	g := r.Group("/api")
 	setupDefaultRoute(g)
 }
 

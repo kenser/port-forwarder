@@ -18,6 +18,7 @@ import (
 // @contact.url https://github.com/cloverzrg/port-forwarder
 
 // @license.name port-forwarder
+// @BasePath /api/
 
 var (
 	BuildTime string

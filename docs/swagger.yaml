@@ -1,3 +1,4 @@
+basePath: /api/
 definitions:
   dto.AddForward:
     properties:
@@ -10,6 +11,32 @@ definitions:
       target_address:
         type: string
       target_port:
+        type: integer
+    type: object
+  dto.ForwardDetail:
+    properties:
+      id:
+        type: integer
+      listen_address:
+        type: string
+      listen_port:
+        type: integer
+      network:
+        type: string
+      status:
+        type: integer
+      target_address:
+        type: string
+      target_port:
+        type: integer
+    type: object
+  dto.ForwardList:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/dto.ForwardDetail'
+        type: array
+      total:
         type: integer
     type: object
   resp.DataResp:
@@ -30,7 +57,7 @@ info:
   title: go-portforwarder
   version: "1.0"
 paths:
-  /v1/forward/:
+  /forward/:
     get:
       consumes:
       - application/json
@@ -54,7 +81,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/resp.DataResp'
+            $ref: '#/definitions/dto.ForwardList'
       summary: get forward list
       tags:
       - froward
@@ -79,7 +106,7 @@ paths:
       summary: add a forward and start it
       tags:
       - froward
-  /v1/forward/{id}:
+  /forward/{id}:
     get:
       consumes:
       - application/json
@@ -100,7 +127,7 @@ paths:
       summary: get froward detail by id
       tags:
       - froward
-  /v1/forward/{id}/delete:
+  /forward/{id}/delete:
     post:
       consumes:
       - application/json
@@ -121,7 +148,7 @@ paths:
       summary: delete forward by id
       tags:
       - froward
-  /v1/forward/{id}/start:
+  /forward/{id}/start:
     post:
       consumes:
       - application/json
@@ -142,7 +169,7 @@ paths:
       summary: start forward by id
       tags:
       - froward
-  /v1/forward/{id}/stop:
+  /forward/{id}/stop:
     post:
       consumes:
       - application/json
@@ -163,7 +190,7 @@ paths:
       summary: stop forward by id
       tags:
       - froward
-  /v1/network/interfaces:
+  /network/interfaces:
     get:
       description: '""'
       produces:

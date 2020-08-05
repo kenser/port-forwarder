@@ -11,8 +11,9 @@
         },
         "version": "1.0"
     },
+    "basePath": "/api/",
     "paths": {
-        "/v1/forward/": {
+        "/forward/": {
             "get": {
                 "description": "\"\"",
                 "consumes": [
@@ -49,7 +50,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/resp.DataResp"
+                            "$ref": "#/definitions/dto.ForwardList"
                         }
                     }
                 }
@@ -87,7 +88,7 @@
                 }
             }
         },
-        "/v1/forward/{id}": {
+        "/forward/{id}": {
             "get": {
                 "description": "\"\"",
                 "consumes": [
@@ -119,7 +120,7 @@
                 }
             }
         },
-        "/v1/forward/{id}/delete": {
+        "/forward/{id}/delete": {
             "post": {
                 "description": "\"\"",
                 "consumes": [
@@ -151,7 +152,7 @@
                 }
             }
         },
-        "/v1/forward/{id}/start": {
+        "/forward/{id}/start": {
             "post": {
                 "description": "\"\"",
                 "consumes": [
@@ -183,7 +184,7 @@
                 }
             }
         },
-        "/v1/forward/{id}/stop": {
+        "/forward/{id}/stop": {
             "post": {
                 "description": "\"\"",
                 "consumes": [
@@ -215,7 +216,7 @@
                 }
             }
         },
-        "/v1/network/interfaces": {
+        "/network/interfaces": {
             "get": {
                 "description": "\"\"",
                 "produces": [
@@ -253,6 +254,46 @@
                     "type": "string"
                 },
                 "target_port": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.ForwardDetail": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "listen_address": {
+                    "type": "string"
+                },
+                "listen_port": {
+                    "type": "integer"
+                },
+                "network": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "target_address": {
+                    "type": "string"
+                },
+                "target_port": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.ForwardList": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.ForwardDetail"
+                    }
+                },
+                "total": {
                     "type": "integer"
                 }
             }
