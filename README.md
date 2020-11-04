@@ -1,4 +1,5 @@
 # portforwarder
+[![Go Report Card](https://goreportcard.com/badge/github.com/cloverzrg/port-forwarder)](https://goreportcard.com/report/github.com/cloverzrg/port-forwarder)
 not released
 
 ### feature
